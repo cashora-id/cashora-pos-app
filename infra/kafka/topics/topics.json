@@ -1,0 +1,100 @@
+{
+  "topics": [
+    {
+      "name": "cashora.payment.initiated",
+      "partitions": 12,
+      "replicationFactor": 3,
+      "config": {
+        "retention.ms": "604800000",
+        "cleanup.policy": "delete",
+        "min.insync.replicas": "2",
+        "compression.type": "lz4"
+      }
+    },
+    {
+      "name": "cashora.payment.completed",
+      "partitions": 12,
+      "replicationFactor": 3,
+      "config": {
+        "retention.ms": "2592000000",
+        "cleanup.policy": "delete",
+        "min.insync.replicas": "2"
+      }
+    },
+    {
+      "name": "cashora.payment.failed",
+      "partitions": 6,
+      "replicationFactor": 3,
+      "config": {
+        "retention.ms": "2592000000",
+        "cleanup.policy": "delete",
+        "min.insync.replicas": "2"
+      }
+    },
+    {
+      "name": "cashora.inventory.stock-updated",
+      "partitions": 12,
+      "replicationFactor": 3,
+      "config": {
+        "retention.ms": "604800000",
+        "cleanup.policy": "delete"
+      }
+    },
+    {
+      "name": "cashora.order.created",
+      "partitions": 12,
+      "replicationFactor": 3,
+      "config": {
+        "retention.ms": "604800000",
+        "cleanup.policy": "delete"
+      }
+    },
+    {
+      "name": "cashora.order.status-changed",
+      "partitions": 12,
+      "replicationFactor": 3,
+      "config": {
+        "retention.ms": "604800000",
+        "cleanup.policy": "delete"
+      }
+    },
+    {
+      "name": "cashora.sync.delta-push",
+      "partitions": 24,
+      "replicationFactor": 3,
+      "config": {
+        "retention.ms": "172800000",
+        "cleanup.policy": "delete",
+        "max.message.bytes": "10485760"
+      }
+    },
+    {
+      "name": "cashora.audit.events",
+      "partitions": 6,
+      "replicationFactor": 3,
+      "config": {
+        "retention.ms": "31536000000",
+        "cleanup.policy": "compact,delete",
+        "min.insync.replicas": "2"
+      }
+    },
+    {
+      "name": "cashora.notification.dispatch",
+      "partitions": 6,
+      "replicationFactor": 3,
+      "config": {
+        "retention.ms": "86400000",
+        "cleanup.policy": "delete"
+      }
+    },
+    {
+      "name": "cashora.dlq",
+      "partitions": 3,
+      "replicationFactor": 3,
+      "config": {
+        "retention.ms": "604800000",
+        "cleanup.policy": "delete"
+      }
+    }
+  ]
+}

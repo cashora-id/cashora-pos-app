@@ -1,0 +1,107 @@
+name: cashora_mobile
+description: "Cashora — Offline-First POS Agent Application for Android & iOS"
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+# ─── Dependencies ─────────────────────────────────────────────────────────────
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # ── State Management ──
+  flutter_bloc: ^8.1.6
+  bloc: ^8.1.4
+  equatable: ^2.0.5
+
+  # ── Local Database (Offline-First) ──
+  drift: ^2.19.1
+  drift_sqflite: ^2.2.1
+  sqlcipher_flutter_libs: ^0.5.4   # AES-256-GCM encryption
+  path_provider: ^2.1.4
+  path: ^1.9.0
+
+  # ── Networking & API ──
+  dio: ^5.5.0+1
+  retrofit: ^4.2.0
+  json_annotation: ^4.9.0
+  json_serializable: ^6.8.0
+
+  # ── Dependency Injection ──
+  get_it: ^7.7.0
+  injectable: ^2.4.2
+
+  # ── Navigation ──
+  go_router: ^14.2.0
+
+  # ── Security & Attestation ──
+  local_auth: ^2.3.0              # Biometric authentication
+  flutter_secure_storage: ^9.2.2  # Keystore / Secure Enclave key storage
+  play_integrity: ^0.3.0          # Play Integrity API (Android)
+  device_info_plus: ^10.1.2
+
+  # ── NFC SoftPOS ──
+  nfc_manager: ^3.3.0
+
+  # ── Push Notifications ──
+  firebase_messaging: ^15.1.1
+  firebase_core: ^3.4.0
+  flutter_local_notifications: ^17.2.2
+
+  # ── Background Sync ──
+  workmanager: ^0.5.2
+
+  # ── Connectivity ──
+  connectivity_plus: ^6.0.5
+
+  # ── UI & Theming ──
+  material_color_utilities: ^0.11.1
+  cached_network_image: ^3.4.0
+  shimmer: ^3.0.0
+  intl: ^0.19.0
+
+  # ── Observability / Analytics ──
+  firebase_analytics: ^11.3.0
+  firebase_crashlytics: ^4.1.1
+
+  # ── Utilities ──
+  uuid: ^4.4.2
+  freezed_annotation: ^2.4.4
+  collection: ^1.18.0
+  rxdart: ^0.28.0
+
+# ─── Dev Dependencies ─────────────────────────────────────────────────────────
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  build_runner: ^2.4.11
+  drift_dev: ^2.19.1
+  injectable_generator: ^2.6.2
+  retrofit_generator: ^9.1.2
+  freezed: ^2.5.6
+  mockito: ^5.4.4
+  bloc_test: ^9.1.7
+
+# ─── Flutter Config ────────────────────────────────────────────────────────────
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/fonts/
+    - assets/images/
+    - assets/icons/
+
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+        - asset: assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700

@@ -1,0 +1,121 @@
+spring:
+  application:
+    name: cashora-backend
+
+  # ─── Datasource ─────────────────────────────────────────────────────────────
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:cashora_dev}
+    username: ${POSTGRES_USER:cashora_app}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: ${POSTGRES_POOL_MIN:5}
+      maximum-pool-size: ${POSTGRES_POOL_MAX:20}
+      idle-timeout: 30000
+      connection-timeout: 30000
+      pool-name: cashora-hikari
+
+  # ─── JPA / Hibernate ────────────────────────────────────────────────────────
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_batch_fetch_size: 25
+        format_sql: false
+
+  # ─── Flyway ─────────────────────────────────────────────────────────────────
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: false
+    validate-on-migrate: true
+
+  # ─── Kafka ──────────────────────────────────────────────────────────────────
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      acks: all
+      retries: 3
+      properties:
+        schema.registry.url: ${KAFKA_SCHEMA_REGISTRY_URL:http://localhost:8081}
+        enable.idempotence: true
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP_ID:cashora-backend}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      properties:
+        schema.registry.url: ${KAFKA_SCHEMA_REGISTRY_URL:http://localhost:8081}
+        specific.avro.reader: true
+
+  # ─── Redis ──────────────────────────────────────────────────────────────────
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      database: ${REDIS_DB:0}
+      lettuce:
+        pool:
+          min-idle: 2
+          max-active: 10
+
+  # ─── Actuator ───────────────────────────────────────────────────────────────
+management:
+  server:
+    port: ${BACKEND_MANAGEMENT_PORT:8081}
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,flyway
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+
+# ─── Server ───────────────────────────────────────────────────────────────────
+server:
+  port: ${BACKEND_PORT:8080}
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain
+  error:
+    include-message: never
+    include-stacktrace: never
+
+# ─── OpenTelemetry ────────────────────────────────────────────────────────────
+otel:
+  exporter:
+    otlp:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318}
+  service:
+    name: ${OTEL_SERVICE_NAME:cashora-backend}
+
+# ─── Cashora Application Configuration ───────────────────────────────────────
+cashora:
+  jwt:
+    private-key-path: ${JWT_PRIVATE_KEY_PATH:}
+    public-key-path: ${JWT_PUBLIC_KEY_PATH:}
+    expiry-seconds: ${JWT_EXPIRY_SECONDS:3600}
+    refresh-expiry-seconds: ${JWT_REFRESH_EXPIRY_SECONDS:604800}
+  vault:
+    address: ${VAULT_ADDR:http://localhost:8200}
+    token: ${VAULT_TOKEN:}
+  opa:
+    base-url: ${OPA_BASE_URL:http://localhost:8181}
+  flagd:
+    host: ${FLAGD_HOST:localhost}
+    port: ${FLAGD_PORT:8013}

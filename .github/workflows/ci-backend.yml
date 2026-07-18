@@ -1,0 +1,136 @@
+name: CI — Backend
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "apps/backend/**"
+      - "packages/api-contracts/**"
+      - ".github/workflows/ci-backend.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "apps/backend/**"
+      - "packages/api-contracts/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  JAVA_VERSION: "21"
+  GRADLE_OPTS: "-Xmx4g -XX:MaxMetaspaceSize=512m"
+
+jobs:
+
+  # ─── Build & Test ─────────────────────────────────────────────────────────
+  build-and-test:
+    name: Build, Lint & Test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: cashora_test
+          POSTGRES_USER: cashora_test
+          POSTGRES_PASSWORD: cashora_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK ${{ env.JAVA_VERSION }} (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+          cache: gradle
+
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v3
+
+      - name: Grant Gradle execute permission
+        run: chmod +x apps/backend/gradlew
+
+      - name: Lint (ktlint)
+        run: cd apps/backend && ./gradlew ktlintCheck
+
+      - name: Static analysis (detekt)
+        run: cd apps/backend && ./gradlew detekt
+
+      - name: Build all modules
+        run: cd apps/backend && ./gradlew build -x test
+
+      - name: Run tests with coverage
+        run: cd apps/backend && ./gradlew test jacocoTestReport
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+          POSTGRES_DB: cashora_test
+          POSTGRES_USER: cashora_test
+          POSTGRES_PASSWORD: cashora_test
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: apps/backend/**/build/reports/jacoco/test/jacocoTestReport.xml
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-test-results
+          path: apps/backend/**/build/test-results/
+
+  # ─── SAST / Security Scan ─────────────────────────────────────────────────
+  security:
+    name: SAST & Dependency Scan
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep SAST
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: |
+            p/kotlin
+            p/owasp-top-ten
+            p/spring
+
+      - name: OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: cashora-backend
+          path: apps/backend
+          format: HTML
+
+      - name: Container image scan (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: apps/backend
+          severity: HIGH,CRITICAL
+          exit-code: 1

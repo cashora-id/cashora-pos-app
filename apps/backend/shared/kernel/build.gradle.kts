@@ -1,0 +1,11 @@
+// shared:kernel — Cross-cutting concern module
+plugins {
+    kotlin("jvm")
+    kotlin("plugin.spring")
+    id("io.spring.dependency-management")
+}
+
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+}

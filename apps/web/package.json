@@ -1,0 +1,80 @@
+{
+  "name": "cashora-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cashora Web Dashboard — Admin & Analytics Platform",
+  "scripts": {
+    "dev": "next dev --turbo",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint && tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "wasm:build": "cd wasm && wasm-pack build --target web --out-dir ../src/lib/wasm/pkg"
+  },
+  "dependencies": {
+    "next": "15.0.3",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+
+    "zustand": "^5.0.0",
+    "immer": "^10.1.1",
+
+    "@tanstack/react-query": "^5.56.2",
+    "@tanstack/react-query-devtools": "^5.56.2",
+
+    "recharts": "^2.12.7",
+
+    "zod": "^3.23.8",
+    "react-hook-form": "^7.53.0",
+    "@hookform/resolvers": "^3.9.0",
+
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
+
+    "axios": "^1.7.7",
+
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+
+    "lucide-react": "^0.441.0",
+
+    "next-auth": "^5.0.0-beta.20",
+
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/sdk-trace-web": "^1.26.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.2",
+    "@types/node": "^22.6.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+
+    "eslint": "^9.11.0",
+    "eslint-config-next": "15.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.6.0",
+    "@typescript-eslint/parser": "^8.6.0",
+
+    "prettier": "^3.3.3",
+
+    "vitest": "^2.1.1",
+    "@vitest/coverage-v8": "^2.1.1",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/user-event": "^14.5.2",
+    "jsdom": "^25.0.1",
+
+    "@playwright/test": "^1.47.2",
+
+    "wasm-pack": "^0.13.0",
+    "@wasm-tool/wasm-pack-plugin": "^1.7.0"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

@@ -1,0 +1,82 @@
+# ─── Java / Kotlin / Gradle ───────────────────────────────────────────────────
+.gradle/
+build/
+out/
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+local.properties
+*.iml
+*.iws
+*.ipr
+.idea/
+.kotlin/
+
+# ─── Flutter / Dart ───────────────────────────────────────────────────────────
+apps/mobile/.dart_tool/
+apps/mobile/.flutter-plugins
+apps/mobile/.flutter-plugins-dependencies
+apps/mobile/.packages
+apps/mobile/build/
+apps/mobile/android/.gradle/
+apps/mobile/android/app/release/
+apps/mobile/android/local.properties
+apps/mobile/ios/.symlinks/
+apps/mobile/ios/Pods/
+apps/mobile/ios/Podfile.lock
+apps/mobile/.fvm/
+
+# ─── Node / Next.js ───────────────────────────────────────────────────────────
+node_modules/
+apps/web/.next/
+apps/web/out/
+apps/web/.env.local
+apps/web/.env.development.local
+apps/web/.env.test.local
+apps/web/.env.production.local
+apps/web/dist/
+pnpm-debug.log
+
+# ─── Rust / WebAssembly ───────────────────────────────────────────────────────
+apps/web/wasm/target/
+apps/web/wasm/pkg/
+
+# ─── Docker ───────────────────────────────────────────────────────────────────
+docker-volumes/
+
+# ─── Terraform ────────────────────────────────────────────────────────────────
+infra/terraform/.terraform/
+infra/terraform/*.tfstate
+infra/terraform/*.tfstate.backup
+infra/terraform/*.tfvars
+infra/terraform/.terraform.lock.hcl
+
+# ─── Secrets & Environment ────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+vault-token
+vault.json
+*secret*
+*credentials*
+
+# ─── OS ───────────────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ─── IDE ──────────────────────────────────────────────────────────────────────
+.vscode/
+.cursor/
+*.suo
+*.user
+nbproject/

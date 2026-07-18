@@ -1,0 +1,52 @@
+{
+  "namespace": "com.cashora.events",
+  "protocol": "CashoraPaymentEvents",
+  "doc": "Payment domain event schemas for Kafka Avro serialization",
+  "types": [
+    {
+      "type": "record",
+      "name": "PaymentInitiated",
+      "doc": "Emitted when a payment command is accepted by the transaction engine",
+      "fields": [
+        {"name": "eventId",         "type": "string",  "doc": "UUID of this event"},
+        {"name": "aggregateId",     "type": "string",  "doc": "Order/transaction UUID"},
+        {"name": "tenantId",        "type": "string",  "doc": "Tenant UUID"},
+        {"name": "branchId",        "type": "string",  "doc": "Branch UUID"},
+        {"name": "cashierId",       "type": "string",  "doc": "Cashier user UUID"},
+        {"name": "amountInRupiah",  "type": "long",    "doc": "Total amount in IDR"},
+        {"name": "paymentMethod",   "type": "string",  "doc": "QRIS|CASH|CARD|TRANSFER"},
+        {"name": "idempotencyKey",  "type": "string",  "doc": "Client idempotency key"},
+        {"name": "occurredAtEpochMs", "type": "long",  "doc": "Epoch milliseconds UTC"}
+      ]
+    },
+    {
+      "type": "record",
+      "name": "PaymentCompleted",
+      "doc": "Emitted when payment is confirmed by the payment gateway",
+      "fields": [
+        {"name": "eventId",          "type": "string"},
+        {"name": "aggregateId",      "type": "string"},
+        {"name": "tenantId",         "type": "string"},
+        {"name": "branchId",         "type": "string"},
+        {"name": "gatewayReference", "type": "string", "doc": "External gateway transaction ID"},
+        {"name": "amountInRupiah",   "type": "long"},
+        {"name": "paymentMethod",    "type": "string"},
+        {"name": "occurredAtEpochMs","type": "long"}
+      ]
+    },
+    {
+      "type": "record",
+      "name": "PaymentFailed",
+      "doc": "Emitted when payment is rejected or times out",
+      "fields": [
+        {"name": "eventId",          "type": "string"},
+        {"name": "aggregateId",      "type": "string"},
+        {"name": "tenantId",         "type": "string"},
+        {"name": "failureReason",    "type": "string", "doc": "GATEWAY_REJECTED|TIMEOUT|INSUFFICIENT_FUNDS|FRAUD_DETECTED"},
+        {"name": "gatewayCode",      "type": ["null", "string"], "default": null},
+        {"name": "occurredAtEpochMs","type": "long"}
+      ]
+    }
+  ],
+  "messages": {}
+}

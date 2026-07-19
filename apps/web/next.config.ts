@@ -8,9 +8,9 @@ const nextConfig: NextConfig = {
   experimental: {
     // Enable React compiler for automatic memoization
     reactCompiler: true,
-    // Server-side packages that should not be bundled
-    serverComponentsExternalPackages: [],
   },
+  // Server-side packages that should not be bundled
+  serverExternalPackages: [],
 
   // ── WebAssembly ───────────────────────────────────────────────────────────
   webpack(config) {

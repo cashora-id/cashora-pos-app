@@ -62,6 +62,13 @@ export default auth(async function middleware(request: NextRequest) {
   }
 
   // ── 3. Content Security Policy (Nonce) ────────────────────────────────────
+  // ⚠️ CRITICAL ARCHITECTURAL WARNING (Next.js SSG vs Dynamic CSP Nonce):
+  // Nonce-based dynamic CSP relies on per-request execution. If any pages are 
+  // statically generated (SSG) or served from static caches (e.g. Vercel Edge/CDN),
+  // this middleware will not execute on cache hits, causing inline script execution
+  // to fail due to mismatching nonces.
+  // Ensure that all routes using dynamic CSP nonces are configured for dynamic 
+  // rendering (e.g., using `export const dynamic = 'force-dynamic'`).
   const nonce = generateNonce();
   const csp   = buildCsp(nonce);
 

@@ -28,6 +28,7 @@ val arrowVersion          = "1.2.4"
 val kotlinSerializVersion = "1.7.1"
 val testcontainersVersion = "1.19.8"
 val mockkVersion          = "1.13.11"
+val archunitVersion       = "1.3.0"
 
 // ─── Shared Configuration for ALL Subprojects ─────────────────────────────────
 subprojects {
@@ -76,6 +77,7 @@ subprojects {
         testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
         testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
         testImplementation("org.testcontainers:kafka:$testcontainersVersion")
+        testImplementation("com.tngtech.archunit:archunit-junit5:$archunitVersion")
     }
 
     tasks.test {

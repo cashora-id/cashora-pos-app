@@ -35,6 +35,7 @@ apps/web/.env.development.local
 apps/web/.env.test.local
 apps/web/.env.production.local
 apps/web/dist/
+*.tsbuildinfo
 pnpm-debug.log
 
 # ─── Rust / WebAssembly ───────────────────────────────────────────────────────

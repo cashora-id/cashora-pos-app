@@ -3,15 +3,20 @@ import { auth } from "@/lib/auth/auth";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Cashora Web Dashboard — Security Middleware
-//
-// Responsibilities:
-// 1. Authentication gate: redirects unauthenticated requests to /login
-// 2. RBAC enforcement: redirects unauthorized roles to /unauthorized
-// 3. Nonce-based Content Security Policy: generates a unique nonce per request
-//    for inline script/style allowlisting, preventing XSS
 // ─────────────────────────────────────────────────────────────────────────────
 
-const PUBLIC_ROUTES = ["/login", "/api/auth"];
+const PUBLIC_ROUTES = [
+  "/",
+  "/layanan",
+  "/harga",
+  "/tentang",
+  "/demo",
+  "/blog",
+  "/kontak",
+  "/login",
+  "/register",
+  "/api/auth",
+];
 const ADMIN_ONLY_ROUTES = ["/admin"];
 
 function generateNonce(): string {
@@ -22,16 +27,16 @@ function generateNonce(): string {
 
 function buildCsp(nonce: string): string {
   const directives: Record<string, string> = {
-    "default-src":    "'self'",
-    "script-src":     `'self' 'nonce-${nonce}' 'strict-dynamic'`,
-    "style-src":      `'self' 'nonce-${nonce}'`,
-    "img-src":        "'self' data: blob: https://*.cashora.id",
-    "font-src":       "'self'",
-    "connect-src":    "'self' https://api.cashora.id wss://api.cashora.id",
+    "default-src": "'self'",
+    "script-src": `'self' 'nonce-${nonce}' 'unsafe-inline' 'unsafe-eval'`,
+    "style-src": `'self' 'unsafe-inline'`,
+    "img-src": "'self' data: blob: https://*.cashora.id",
+    "font-src": "'self' data:",
+    "connect-src": "'self' https://api.cashora.id wss://api.cashora.id",
     "frame-ancestors": "'none'",
-    "base-uri":       "'self'",
-    "form-action":    "'self'",
-    "object-src":     "'none'",
+    "base-uri": "'self'",
+    "form-action": "'self'",
+    "object-src": "'none'",
   };
 
   return Object.entries(directives)
@@ -41,10 +46,10 @@ function buildCsp(nonce: string): string {
 
 export default auth(async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isPublicRoute = PUBLIC_ROUTES.some((r) => pathname.startsWith(r));
+  const isPublicRoute =
+    pathname === "/" || PUBLIC_ROUTES.some((r) => r !== "/" && pathname.startsWith(r));
 
   // ── 1. Authentication Gate ─────────────────────────────────────────────────
-  // @ts-ignore – NextAuth v5 augments NextRequest
   const session = (request as any).auth;
 
   if (!session && !isPublicRoute) {
@@ -63,7 +68,7 @@ export default auth(async function middleware(request: NextRequest) {
 
   // ── 3. Content Security Policy (Nonce) ────────────────────────────────────
   const nonce = generateNonce();
-  const csp   = buildCsp(nonce);
+  const csp = buildCsp(nonce);
 
   const response = NextResponse.next({
     request: {
@@ -80,7 +85,5 @@ export default auth(async function middleware(request: NextRequest) {
 });
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|public/).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|public/).*)"],
 };

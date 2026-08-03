@@ -17,7 +17,7 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["var(--font-plus-jakarta)", "Inter", "sans-serif"],
+        sans: ["var(--font-plus-jakarta)", "sans-serif"],
         body: ["var(--font-inter)", "sans-serif"],
       },
     },

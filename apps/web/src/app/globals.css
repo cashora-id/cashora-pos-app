@@ -5,17 +5,25 @@
 @layer base {
   :root {
     --brand-navy: #0A2540;
-    --brand-emerald: #00C897;
+    --brand-[#00C897]: #00C897;
     --brand-bg: #F5F7FA;
   }
 
   html {
     scroll-behavior: smooth;
+    font-family: var(--font-inter), sans-serif;
   }
 
   body {
     background-color: #F5F7FA;
     color: #0A2540;
+    font-family: var(--font-inter), sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-plus-jakarta), sans-serif;
   }
 }
 

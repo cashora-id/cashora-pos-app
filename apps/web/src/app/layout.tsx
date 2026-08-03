@@ -1,12 +1,27 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans, Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-plus-jakarta",
+  display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
-  title: "Cashora — Satu POS untuk Semua Skala Bisnis Indonesia",
+  title: "Cashora — Satu POS untuk Semua Skala Bisnis",
   description:
-    "Platform POS modern dengan mode offline-first, tanpa biaya per cabang, dan keamanan perbankan 7 lapis. Cocok untuk UMKM, restoran, retail, dan korporasi.",
+    "Platform POS modern dengan mode offline, tanpa biaya per cabang, dan keamanan perbankan. Cocok untuk UMKM, restoran, retail, dan korporasi Indonesia.",
   keywords: ["POS", "Kasir POS", "UMKM", "Restoran", "QRIS TUNTAS", "Offline First POS", "Indonesia"],
   openGraph: {
     title: "Cashora — Satu POS untuk Semua Skala Bisnis",
@@ -24,8 +39,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className="scroll-smooth">
-      <body className="antialiased bg-[#F5F7FA] text-[#0A2540] min-h-screen flex flex-col">
+    <html lang="id" className="scroll-smooth bg-[#0A2540]">
+      <body
+        className={`${plusJakartaSans.variable} ${inter.variable} antialiased font-body bg-[#F5F7FA] text-[#0A2540] min-h-screen flex flex-col`}
+      >
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />

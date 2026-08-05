@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import {
@@ -11,6 +13,7 @@ import {
   BarChart3,
   CheckCircle,
 } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function LayananPage() {
   const services = [
@@ -65,15 +68,42 @@ export default function LayananPage() {
   ];
 
   return (
-    <div className="pt-20">
+    <main className="pt-16">
       {/* HEADER */}
-      <section className="bg-[#0A2540] text-white py-16 text-center">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <p className="text-sm font-semibold text-[#00C897] uppercase tracking-widest mb-3">Layanan & Fitur</p>
-          <h1 className="font-sans font-bold text-4xl sm:text-5xl mb-4">Fitur Lengkap untuk Skala Bisnis Anda</h1>
-          <p className="text-white/70 text-lg max-w-2xl mx-auto">
+      <section className="bg-[#0A2540] text-white py-20 text-center relative overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-[0.04] pointer-events-none"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+          }}
+        />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-xs font-semibold text-[#00C897] uppercase tracking-widest mb-3 font-body"
+          >
+            Layanan & Fitur
+          </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="font-sans font-bold text-4xl sm:text-5xl text-white mb-4"
+          >
+            Fitur Lengkap untuk Skala Bisnis Anda
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-white/70 text-base sm:text-lg max-w-2xl mx-auto font-body"
+          >
             Didesain khusus untuk memenuhi kebutuhan operasional toko ritel, restoran, kafe, hingga franchise multi-cabang di Indonesia.
-          </p>
+          </motion.p>
         </div>
       </section>
 
@@ -84,8 +114,13 @@ export default function LayananPage() {
             {services.map((item, idx) => {
               const IconComp = item.icon;
               return (
-                <div
+                <motion.div
                   key={idx}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: (idx % 2) * 0.15 }}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
                   className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
                 >
                   <div>
@@ -93,31 +128,37 @@ export default function LayananPage() {
                       <IconComp className="w-7 h-7 text-[#00C897]" />
                     </div>
                     <h2 className="font-sans font-bold text-xl text-[#0A2540] mb-3">{item.title}</h2>
-                    <p className="text-gray-600 text-sm leading-relaxed mb-6">{item.desc}</p>
+                    <p className="text-gray-600 text-sm leading-relaxed mb-6 font-body">{item.desc}</p>
                   </div>
                   <div className="border-t border-gray-100 pt-4 space-y-2">
                     {item.details.map((detail, dIdx) => (
-                      <div key={dIdx} className="flex items-center gap-2.5 text-xs text-gray-700 font-medium">
+                      <div key={dIdx} className="flex items-center gap-2.5 text-xs text-gray-700 font-medium font-body">
                         <CheckCircle className="w-4 h-4 text-[#00C897] shrink-0" />
                         <span>{detail}</span>
                       </div>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>
 
           {/* CTA Banner */}
-          <div className="mt-16 bg-[#0A2540] rounded-2xl p-8 sm:p-12 text-white text-center shadow-xl">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="mt-16 bg-[#0A2540] rounded-2xl p-8 sm:p-12 text-white text-center shadow-xl relative overflow-hidden"
+          >
             <h2 className="font-sans font-bold text-2xl sm:text-3xl mb-4">Ingin Mencoba Fitur Ini Langsung?</h2>
-            <p className="text-white/70 max-w-xl mx-auto mb-8 text-sm sm:text-base">
+            <p className="text-white/70 max-w-xl mx-auto mb-8 text-sm sm:text-base font-body">
               Akses demo virtual interaktif atau jadwalkan konsultasi 1-on-1 bersama tim spesialis kami.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link
                 href="/demo"
-                className="px-6 py-3.5 bg-[#00C897] text-[#0A2540] font-bold rounded-xl text-sm hover:bg-[#00a87e] transition-colors"
+                className="px-6 py-3.5 bg-[#00C897] text-[#0A2540] font-bold rounded-xl text-sm hover:bg-[#00a87e] transition-all hover:scale-105"
               >
                 Coba Demo Interaktif
               </Link>
@@ -128,9 +169,9 @@ export default function LayananPage() {
                 Konsultasi Gratis
               </Link>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

@@ -2,263 +2,334 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Check, HelpCircle, Building2, Store } from "lucide-react";
+import { Check, ChevronDown, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
-export default function HargaPage() {
-  const [branches, setBranches] = useState<number>(3);
-  const [isAnnual, setIsAnnual] = useState<boolean>(true);
+export default function PricingPage() {
+  const [isAnnual, setIsAnnual] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [showComparison, setShowComparison] = useState(false);
 
-  // Cashora: Flat rate (Rp 299,000 / bln) vs traditional POS (Rp 250,000 / outlet / bln)
-  const monthlyRatePerBranchTraditional = 250000;
-  const cashoraFlatRateMonthly = isAnnual ? 249000 : 299000;
-
-  const traditionalTotalCost = branches * monthlyRatePerBranchTraditional;
-  const cashoraTotalCost = cashoraFlatRateMonthly;
-  const monthlySavings = Math.max(0, traditionalTotalCost - cashoraTotalCost);
-
-  const plans = [
-    {
-      name: "Starter / UMKM",
-      priceMonthly: "Rp 149.000",
-      priceAnnual: "Rp 119.000",
-      period: "/ bulan",
-      desc: "Cocok untuk warung, kedai kopi single outlet, dan toko ritel mikro.",
-      features: [
-        "1 Outlet Aktif",
-        "Mode Kasir Offline-First",
-        "QRIS Statis & Dinamis",
-        "Laporan Penjualan Dasar",
-        "Stok & Inventori Dasar",
-        "Dukungan WhatsApp 24/7",
-      ],
-      cta: "Pilih Starter",
-      popular: false,
-    },
-    {
-      name: "Pro Expansion",
-      priceMonthly: "Rp 299.000",
-      priceAnnual: "Rp 249.000",
-      period: "/ bulan",
-      desc: "Solusi utama untuk bisnis berkembang tanpa biaya per cabang.",
-      features: [
-        "CABANG TAK TERBATAS (Rp 0 per outlet)",
-        "Kasir & User Tak Terbatas",
-        "Mode Offline-First & Auto Delta Sync",
-        "Kitchen Display System (KDS)",
-        "Integrasi GoFood, GrabFood, ShopeeFood",
-        "QRIS TUNTAS (Tarik & Setor Tunai)",
-        "Analitik & Laporan Laba Rugi Realtime",
-        "Keamanan Standard Perbankan 7 Lapis",
-      ],
-      cta: "Mulai Pro Expansion",
-      popular: true,
-    },
-    {
-      name: "Enterprise Custom",
-      priceMonthly: "Custom",
-      priceAnnual: "Custom",
-      period: "",
-      desc: "Untuk jaringan korporasi besar, franchise 50+ outlet, dan integrasi ERP.",
-      features: [
-        "Semua Fitur Pro Expansion",
-        "Dedicated Account Manager",
-        "SLA Uptime 99.99% Guaranteed",
-        "Integrasi Custom ERP / SAP",
-        "Custom Feature Development",
-        "On-premise / Private Cloud option",
-        "Pelatihan Staf & Onboarding Langsung",
-      ],
-      cta: "Hubungi Tim Sales",
-      popular: false,
-    },
-  ];
+  const toggleFaq = (index: number) => {
+    setOpenFaq(openFaq === index ? null : index);
+  };
 
   const faqs = [
     {
-      q: "Apa maksud dari Expansion-Neutral Pricing?",
-      a: "Artinya Anda membayar biaya berlangganan tetap per bulan. Ketika Anda menambah cabang baru (misal dari 1 menjadi 10 cabang), biaya bulanan Anda TETAP SAMA tanpa biaya lisensi per cabang.",
+      q: "Apakah ada biaya transaksi per pembayaran?",
+      a: "Tidak ada biaya transaksi tambahan dari Cashora untuk pembayaran tunai. Untuk QRIS dan metode digital, berlaku MDR standar regulator tanpa markup tambahan.",
     },
     {
-      q: "Apakah aplikasi kasir benar-benar bisa transaksi saat internet mati?",
-      a: "Ya! Aplikasi POS Cashora berbasis offline-first. Semua transaksi kasir tersimpan lokal di perangkat dan akan disinkronkan otomatis begitu koneksi internet kembali terhubung.",
+      q: "Bisakah saya upgrade atau downgrade paket kapan saja?",
+      a: "Bisa, Anda bebas upgrade, downgrade, atau membatalkan langganan kapan saja tanpa denda atau biaya pembatalan.",
     },
     {
-      q: "Apakah ada biaya tersembunyi seperti biaya setup atau pemeliharaan?",
-      a: "Sama sekali tidak ada. Semua pembaruan aplikasi, keamanan, dan dukungan teknis sudah termasuk dalam biaya langganan bulanan.",
+      q: "Apakah harga berubah jika saya buka cabang baru?",
+      a: "Sama sekali tidak! Dengan model Expansion-Neutral pada paket Pro & Enterprise, Anda bisa membuka cabang sebanyak-banyaknya tanpa biaya lisensi per outlet.",
     },
     {
-      q: "Apakah saya bisa mengubah atau membatalkan paket kapan saja?",
-      a: "Bisa. Anda bebas upgrade, downgrade, atau membatalkan langganan kapan saja tanpa denda pembatalan.",
+      q: "Apa yang terjadi setelah trial 14 hari berakhir?",
+      a: "Setelah masa uji coba 14 hari selesai, Anda dapat memilih paket berlangganan sesuai kebutuhan. Data transaksi Anda tersimpan aman dan tidak akan hilang.",
+    },
+    {
+      q: "Apakah tersedia dukungan dalam bahasa Indonesia?",
+      a: "Ya, seluruh tim customer support kami berbasis di Indonesia dan siap membantu via chat WhatsApp, email, maupun telepon 24/7.",
     },
   ];
 
   return (
-    <div className="pt-20">
-      {/* HEADER */}
-      <section className="bg-[#0A2540] text-white py-16 text-center">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <p className="text-sm font-semibold text-[#00C897] uppercase tracking-widest mb-3">Harga Transparan</p>
-          <h1 className="font-sans font-bold text-4xl sm:text-5xl mb-4">Investasi Ringan untuk Pertumbuhan Bisnis</h1>
-          <p className="text-white/70 text-lg max-w-2xl mx-auto mb-8">
-            Bayar satu harga transparan, tanpa biaya lisensi per outlet atau biaya tersembunyi.
-          </p>
-
-          {/* Toggle Annual/Monthly */}
-          <div className="inline-flex items-center bg-white/10 p-1.5 rounded-xl border border-white/15">
-            <button
-              onClick={() => setIsAnnual(false)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
-                !isAnnual ? "bg-[#00C897] text-[#0A2540]" : "text-white/80 hover:text-white"
-              }`}
-            >
-              Bulanan
-            </button>
-            <button
-              onClick={() => setIsAnnual(true)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${
-                isAnnual ? "bg-[#00C897] text-[#0A2540]" : "text-white/80 hover:text-white"
-              }`}
-            >
-              Tahunan <span className="text-[10px] bg-[#0A2540] text-[#00C897] px-2 py-0.5 rounded-full font-bold">Hemat 20%</span>
-            </button>
-          </div>
+    <main>
+      {/* HERO SECTION */}
+      <section className="relative bg-[#0A2540] text-white pt-24 pb-20 overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-[0.04] pointer-events-none"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+          }}
+        />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-xs font-semibold text-[#00C897] uppercase tracking-widest mb-3 font-body"
+          >
+            HARGA TRANSPARAN
+          </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="font-sans font-bold text-4xl sm:text-5xl lg:text-6xl text-white leading-tight mb-4 text-balance max-w-4xl mx-auto"
+          >
+            Harga Sederhana, Skalakan Tanpa Beban
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-lg text-white/70 font-body max-w-2xl mx-auto"
+          >
+            Satu harga, cabang tidak terbatas. Tidak ada biaya kejutan.
+          </motion.p>
         </div>
       </section>
 
-      {/* PRICING CARDS */}
-      <section className="bg-[#F5F7FA] py-20">
+      {/* PRICING CARDS SECTION */}
+      <section className="bg-[#F5F7FA] py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-3 gap-8 mb-20">
-            {plans.map((plan, idx) => (
-              <div
-                key={idx}
-                className={`bg-white rounded-2xl p-8 border flex flex-col justify-between relative shadow-sm hover:shadow-xl transition-all ${
-                  plan.popular ? "border-[#00C897] ring-2 ring-[#00C897]/20 shadow-lg" : "border-gray-100"
-                }`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#00C897] text-[#0A2540] text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wider shadow">
-                    Paling Populer
-                  </div>
-                )}
+          {/* TOGGLE SWITCH */}
+          <div className="flex items-center justify-center gap-3 mb-16">
+            <span className={`text-sm font-medium font-body ${!isAnnual ? "text-[#0A2540]" : "text-gray-400"}`}>
+              Bulanan
+            </span>
+            <button
+              onClick={() => setIsAnnual(!isAnnual)}
+              className="relative w-14 h-8 bg-[#0A2540] rounded-full p-1 transition-colors duration-300 focus:outline-none"
+              aria-label="Toggle annual pricing"
+            >
+              <motion.div
+                animate={{ x: isAnnual ? 24 : 0 }}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                className="w-6 h-6 rounded-full bg-[#00C897]"
+              />
+            </button>
+            <span className={`text-sm font-medium font-body ${isAnnual ? "text-[#0A2540]" : "text-gray-400"}`}>
+              Tahunan
+            </span>
+            <span className="bg-[#00C897] text-[#0A2540] text-xs font-bold px-2.5 py-1 rounded-full font-body">
+              Hemat 15%
+            </span>
+          </div>
 
-                <div>
-                  <h2 className="font-sans font-bold text-2xl text-[#0A2540] mb-2">{plan.name}</h2>
-                  <p className="text-gray-500 text-xs mb-6 leading-relaxed">{plan.desc}</p>
+          {/* PRICING CARDS GRID */}
+          <div className="grid lg:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto mb-12">
+            {/* CARD 1: BASIC */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm flex flex-col justify-between"
+            >
+              <div>
+                <h3 className="font-sans font-bold text-2xl text-[#0A2540] mb-2">Basic</h3>
+                <p className="text-xs text-gray-500 font-body mb-6 min-h-[32px]">
+                  Untuk UMKM dan usaha kecil yang baru memulai.
+                </p>
 
-                  <div className="mb-6">
-                    <span className="font-sans font-extrabold text-4xl text-[#0A2540]">
-                      {isAnnual ? plan.priceAnnual : plan.priceMonthly}
-                    </span>
-                    <span className="text-gray-400 text-sm">{plan.period}</span>
-                  </div>
-
-                  <ul className="space-y-3 border-t border-gray-100 pt-6 mb-8">
-                    {plan.features.map((feat, fIdx) => (
-                      <li key={fIdx} className="flex items-start gap-2.5 text-xs text-gray-700">
-                        <Check className="w-4 h-4 text-[#00C897] shrink-0 mt-0.5" />
-                        <span className={feat.includes("TAK TERBATAS") ? "font-bold text-[#0A2540]" : ""}>{feat}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <div className="mb-6">
+                  <span className="font-sans font-bold text-3xl sm:text-4xl text-[#0A2540]">
+                    {isAnnual ? "Rp 126.000" : "Rp 149.000"}
+                  </span>
+                  <span className="text-xs text-gray-400 font-body ml-1">/bln</span>
                 </div>
 
                 <Link
-                  href="/register"
-                  className={`w-full py-3.5 rounded-xl text-center font-bold text-sm transition-colors ${
-                    plan.popular
-                      ? "bg-[#00C897] text-[#0A2540] hover:bg-[#00a87e]"
-                      : "bg-[#0A2540] text-white hover:bg-[#07192b]"
-                  }`}
+                  href="/register?plan=basic"
+                  className="block text-center w-full py-3.5 px-4 bg-[#0A2540] text-white font-semibold rounded-xl text-sm hover:bg-[#0A2540]/90 transition-colors mb-8"
                 >
-                  {plan.cta}
+                  Pilih Basic
                 </Link>
-              </div>
-            ))}
-          </div>
 
-          {/* INTERACTIVE BRANCH SAVINGS CALCULATOR */}
-          <div className="bg-white rounded-2xl p-8 sm:p-12 border border-gray-200 shadow-md mb-20">
-            <div className="max-w-3xl mx-auto text-center mb-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00C897]/10 text-[#00C897] text-xs font-semibold mb-3">
-                <Building2 className="w-4 h-4" />
-                <span>Kalkulator Biaya Ekspansi</span>
+                <ul className="space-y-3">
+                  {[
+                    "1 outlet",
+                    "Hingga 3 kasir",
+                    "Kasir & POS dasar",
+                    "Manajemen produk & stok",
+                    "QRIS & pembayaran digital",
+                    "Laporan harian",
+                    "Support via email",
+                  ].map((feature, i) => (
+                    <li key={i} className="flex items-center gap-3 text-xs text-gray-600 font-body">
+                      <Check className="w-4 h-4 text-[#00C897] shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <h2 className="font-sans font-bold text-2xl sm:text-3xl text-[#0A2540] mb-2">
-                Berapa Biaya Hemat Anda dengan Cashora?
-              </h2>
-              <p className="text-gray-500 text-sm">
-                Bandingkan skema harga flat Cashora dengan POS konvensional yang menagih biaya per cabang.
-              </p>
-            </div>
+            </motion.div>
 
-            <div className="grid md:grid-cols-2 gap-8 items-center max-w-4xl mx-auto">
-              {/* Slider Input */}
-              <div className="bg-[#F5F7FA] p-6 rounded-2xl border border-gray-100">
-                <label className="block text-sm font-bold text-[#0A2540] mb-2">Jumlah Cabang Bisnis Anda:</label>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-3xl font-extrabold text-[#00C897]">{branches} Outlet</span>
-                  <span className="text-xs text-gray-400">1 - 50 Outlet</span>
-                </div>
-                <input
-                  type="range"
-                  min="1"
-                  max="30"
-                  value={branches}
-                  onChange={(e) => setBranches(parseInt(e.target.value))}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#00C897]"
-                />
-                <p className="text-[11px] text-gray-400 mt-4 leading-relaxed">
-                  POS Konvensional umumnya membebankan biaya lisensi ~Rp 250.000/outlet/bulan.
+            {/* CARD 2: PRO (POPULAR) */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="bg-white rounded-2xl p-8 border-2 border-[#00C897] shadow-xl relative flex flex-col justify-between"
+            >
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#00C897] text-[#0A2540] text-xs font-bold px-4 py-1 rounded-full font-body tracking-wide flex items-center gap-1 shadow-sm">
+                <Sparkles className="w-3.5 h-3.5" />
+                Paling Populer
+              </div>
+
+              <div>
+                <h3 className="font-sans font-bold text-2xl text-[#0A2540] mb-2">Pro</h3>
+                <p className="text-xs text-gray-500 font-body mb-6 min-h-[32px]">
+                  Untuk restoran, retail berkembang, dan multi-cabang.
                 </p>
-              </div>
 
-              {/* Comparison Box */}
-              <div className="space-y-4">
-                <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 flex justify-between items-center">
-                  <div>
-                    <p className="text-xs text-gray-500">POS Konvensional ({branches} Cabang)</p>
-                    <p className="text-lg font-bold text-gray-700">Rp {traditionalTotalCost.toLocaleString("id-ID")}/bln</p>
-                  </div>
-                  <Store className="w-6 h-6 text-gray-400" />
+                <div className="mb-6">
+                  <span className="font-sans font-bold text-3xl sm:text-4xl text-[#0A2540]">
+                    {isAnnual ? "Rp 254.000" : "Rp 299.000"}
+                  </span>
+                  <span className="text-xs text-gray-400 font-body ml-1">/bln</span>
                 </div>
 
-                <div className="bg-[#0A2540] text-white p-5 rounded-xl border border-[#00C897]/40 flex justify-between items-center shadow-md">
-                  <div>
-                    <p className="text-xs text-[#00C897] font-semibold">Cashora Pro Expansion ({branches} Cabang)</p>
-                    <p className="text-2xl font-extrabold text-white">Rp {cashoraTotalCost.toLocaleString("id-ID")}/bln</p>
-                  </div>
-                  <span className="text-xs bg-[#00C897] text-[#0A2540] px-2.5 py-1 rounded-full font-bold">FLAT RATE</span>
+                <Link
+                  href="/register?plan=pro"
+                  className="block text-center w-full py-3.5 px-4 bg-[#00C897] text-[#0A2540] font-semibold rounded-xl text-sm hover:bg-[#00a87e] transition-colors mb-8 shadow-sm"
+                >
+                  Pilih Pro
+                </Link>
+
+                <ul className="space-y-3">
+                  {[
+                    "Cabang tidak terbatas",
+                    "Kasir tidak terbatas",
+                    "Semua fitur Basic",
+                    "Kitchen Display System",
+                    "Manajemen meja & reservasi",
+                    "Integrasi GoFood/GrabFood/ShopeeFood",
+                    "CRM & program loyalitas",
+                    "Laporan lengkap & ekspor",
+                    "QRIS Tuntas (tarik/setor)",
+                    "Support prioritas (chat 24/7)",
+                  ].map((feature, i) => (
+                    <li key={i} className="flex items-center gap-3 text-xs text-gray-600 font-body">
+                      <Check className="w-4 h-4 text-[#00C897] shrink-0" />
+                      <span className={i < 2 ? "font-semibold text-[#0A2540]" : ""}>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+
+            {/* CARD 3: ENTERPRISE */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm flex flex-col justify-between"
+            >
+              <div>
+                <h3 className="font-sans font-bold text-2xl text-[#0A2540] mb-2">Enterprise</h3>
+                <p className="text-xs text-gray-500 font-body mb-6 min-h-[32px]">
+                  Untuk korporasi dan franchise dengan kebutuhan khusus.
+                </p>
+
+                <div className="mb-6">
+                  <span className="font-sans font-bold text-3xl sm:text-4xl text-[#0A2540]">Custom</span>
+                  <p className="text-xs text-gray-400 font-body mt-1">Disesuaikan kebutuhan</p>
                 </div>
 
-                {monthlySavings > 0 && (
-                  <div className="bg-[#00C897]/15 p-3 rounded-xl border border-[#00C897]/30 text-center">
-                    <p className="text-xs text-[#0A2540] font-semibold">
-                      🎉 Anda Menghemat <strong className="text-[#00a87e] font-extrabold">Rp {monthlySavings.toLocaleString("id-ID")}</strong> / bulan dengan Cashora!
-                    </p>
-                  </div>
-                )}
+                <Link
+                  href="/kontak"
+                  className="block text-center w-full py-3.5 px-4 bg-white border border-[#0A2540] text-[#0A2540] font-semibold rounded-xl text-sm hover:bg-[#0A2540]/5 transition-colors mb-8"
+                >
+                  Hubungi Kami
+                </Link>
+
+                <ul className="space-y-3">
+                  {[
+                    "Semua fitur Pro",
+                    "White-label & custom branding",
+                    "Integrasi ERP/Akuntansi",
+                    "SLA premium 99,9% uptime",
+                    "Onboarding & training tim",
+                    "Dedicated account manager",
+                    "Custom report & API",
+                    "Audit keamanan berkala",
+                    "Hosting dedicated (opsional)",
+                    "Kontrak fleksibel",
+                  ].map((feature, i) => (
+                    <li key={i} className="flex items-center gap-3 text-xs text-gray-600 font-body">
+                      <Check className="w-4 h-4 text-[#00C897] shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
+            </motion.div>
           </div>
 
-          {/* FAQ SECTION */}
-          <div className="max-w-4xl mx-auto">
-            <h2 className="font-sans font-bold text-2xl text-[#0A2540] text-center mb-8">Pertanyaan Sering Diajukan (FAQ)</h2>
-            <div className="space-y-4">
-              {faqs.map((faq, fIdx) => (
-                <div key={fIdx} className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
-                  <h3 className="font-bold text-[#0A2540] text-base mb-2 flex items-center gap-2">
-                    <HelpCircle className="w-5 h-5 text-[#00C897] shrink-0" />
-                    {faq.q}
-                  </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed pl-7">{faq.a}</p>
-                </div>
-              ))}
-            </div>
+          {/* TOGGLE COMPARISON BUTTON */}
+          <div className="text-center mb-24">
+            <button
+              onClick={() => setShowComparison(!showComparison)}
+              className="inline-flex items-center gap-2 text-xs font-semibold text-[#0A2540] hover:text-[#00C897] transition-colors font-body py-2 px-4 rounded-lg bg-white border border-gray-200 shadow-sm"
+            >
+              Tampilkan Perbandingan Fitur Lengkap
+              <ChevronDown className={`w-4 h-4 transition-transform ${showComparison ? "rotate-180" : ""}`} />
+            </button>
           </div>
         </div>
       </section>
-    </div>
+
+      {/* FAQ SECTION */}
+      <section className="bg-white py-24">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="font-sans font-bold text-3xl sm:text-4xl text-[#0A2540]">Pertanyaan Seputar Harga</h2>
+          </div>
+
+          <div className="space-y-4">
+            {faqs.map((faq, idx) => (
+              <div key={idx} className="border border-gray-100 rounded-2xl overflow-hidden bg-white shadow-sm">
+                <button
+                  onClick={() => toggleFaq(idx)}
+                  className="w-full py-5 px-6 flex items-center justify-between text-left hover:bg-[#F5F7FA] transition-colors"
+                >
+                  <span className="font-sans font-semibold text-sm sm:text-base text-[#0A2540]">{faq.q}</span>
+                  <ChevronDown
+                    className={`w-5 h-5 text-gray-400 shrink-0 transition-transform duration-300 ${
+                      openFaq === idx ? "rotate-180 text-[#00C897]" : ""
+                    }`}
+                  />
+                </button>
+
+                <AnimatePresence>
+                  {openFaq === idx && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-5 pt-1 text-xs sm:text-sm text-gray-500 font-body leading-relaxed border-t border-gray-50">
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* BANNER CTA */}
+      <section className="bg-[#0A2540] py-20 text-white text-center relative overflow-hidden">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+          <h2 className="font-sans font-bold text-3xl sm:text-4xl mb-4 text-balance">Mulai Gratis Selama 14 Hari</h2>
+          <p className="text-white/70 text-sm sm:text-base leading-relaxed mb-8 max-w-xl mx-auto font-body">
+            Tidak perlu kartu kredit. Batalkan kapan saja. Setup dalam 5 menit.
+          </p>
+          <div className="flex justify-center">
+            <Link
+              href="/register"
+              className="px-8 py-3.5 bg-[#00C897] text-[#0A2540] font-semibold rounded-full text-sm hover:bg-[#00a87e] transition-all hover:scale-105 shadow-lg shadow-[#00C897]/20"
+            >
+              Coba Gratis Sekarang
+            </Link>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

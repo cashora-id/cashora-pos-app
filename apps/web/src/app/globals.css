@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,26 +7,34 @@
 @layer base {
   :root {
     --brand-navy: #0A2540;
-    --brand-[#00C897]: #00C897;
+    --brand-emerald: #00C897;
     --brand-bg: #F5F7FA;
   }
 
   html {
     scroll-behavior: smooth;
-    font-family: var(--font-inter), sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 
   body {
     background-color: #F5F7FA;
     color: #0A2540;
-    font-family: var(--font-inter), sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-plus-jakarta), sans-serif;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   }
+}
+
+.font-sans {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+}
+
+.font-body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
 }
 
 @keyframes pingSlow {

@@ -2,144 +2,268 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { User, Store, Mail, Phone, Lock, CheckCircle2, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, Check } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 
 export default function RegisterPage() {
+  const [step, setStep] = useState(1);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
     businessName: "",
     businessType: "F&B / Restoran",
-    email: "",
-    phone: "",
-    password: "",
   });
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Registrasi merchant berhasil untuk ${formData.businessName}`);
+    if (step === 1) {
+      setStep(2);
+    } else {
+      alert(`Registrasi berhasil untuk ${formData.fullName} - ${formData.businessName}`);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#0A2540] flex items-center justify-center p-4 pt-24 pb-12">
-      <div className="bg-white rounded-2xl p-8 sm:p-10 shadow-2xl w-full max-w-lg border border-white/20">
-        <div className="text-center mb-8">
-          <Logo light={false} className="justify-center mb-3" />
-          <h1 className="font-sans font-bold text-2xl text-[#0A2540]">Daftar Akun Cashora</h1>
-          <p className="text-xs text-gray-500 mt-1">Coba gratis 14 hari tanpa biaya tersembunyi</p>
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col lg:flex-row font-body">
+      {/* LEFT PANEL: DARK NAVY (50% WIDTH ON LG SCREEN) */}
+      <div className="lg:w-1/2 bg-[#0A2540] text-white p-8 lg:p-14 flex flex-col justify-between relative overflow-hidden min-h-[450px] lg:min-h-screen">
+        <div
+          className="absolute inset-0 opacity-[0.04] pointer-events-none"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+          aria-hidden="true"
+        />
+
+        {/* TOP LOGO */}
+        <div className="relative z-10">
+          <Logo light={true} />
         </div>
 
-        <form onSubmit={handleRegister} className="space-y-4">
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-[#0A2540] mb-1.5">Nama Lengkap</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  required
-                  placeholder="Budi Santoso"
-                  value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  className="w-full px-4 py-2.5 pl-10 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#00C897]"
-                />
-                <User className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
+        {/* MIDDLE CONTENT: TITLE & CHECKLIST */}
+        <div className="relative z-10 my-auto py-8 max-w-lg space-y-8">
+          <h1 className="font-sans font-bold text-3xl sm:text-4xl text-white leading-tight text-balance">
+            Mulai Perjalanan Bisnis Anda Bersama Cashora
+          </h1>
+
+          <ul className="space-y-4 font-body text-xs sm:text-sm text-white/80">
+            <li className="flex items-center gap-3">
+              <div className="w-5 h-5 rounded-full bg-[#00C897]/20 text-[#00C897] flex items-center justify-center shrink-0">
+                <Check className="w-3.5 h-3.5 stroke-[3]" />
               </div>
+              <span>Coba gratis 14 hari tanpa kartu kredit</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <div className="w-5 h-5 rounded-full bg-[#00C897]/20 text-[#00C897] flex items-center justify-center shrink-0">
+                <Check className="w-3.5 h-3.5 stroke-[3]" />
+              </div>
+              <span>Setup dalam 5 menit, langsung bisa jalan</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <div className="w-5 h-5 rounded-full bg-[#00C897]/20 text-[#00C897] flex items-center justify-center shrink-0">
+                <Check className="w-3.5 h-3.5 stroke-[3]" />
+              </div>
+              <span>Dukungan onboarding dari tim kami</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <div className="w-5 h-5 rounded-full bg-[#00C897]/20 text-[#00C897] flex items-center justify-center shrink-0">
+                <Check className="w-3.5 h-3.5 stroke-[3]" />
+              </div>
+              <span>Batalkan kapan saja, tanpa penalti</span>
+            </li>
+          </ul>
+        </div>
+
+        {/* BOTTOM FOOTER */}
+        <div className="relative z-10 text-xs text-white/40 font-body">
+          © 2026 Cashora · halo@cashora.id
+        </div>
+      </div>
+
+      {/* RIGHT PANEL: FORM (50% WIDTH ON LG SCREEN) */}
+      <div className="lg:w-1/2 p-8 lg:p-14 flex items-center justify-center min-h-[550px]">
+        <div className="w-full max-w-md space-y-8">
+          {/* STEP WIZARD INDICATOR */}
+          <div className="flex items-center justify-center gap-4 text-xs font-semibold font-body mb-6">
+            <div className="flex items-center gap-2">
+              <div
+                className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs font-sans ${
+                  step >= 1 ? "bg-[#0A2540] text-white" : "bg-gray-200 text-gray-500"
+                }`}
+              >
+                1
+              </div>
+              <span className={step >= 1 ? "text-[#0A2540] font-bold" : "text-gray-400"}>Akun</span>
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-[#0A2540] mb-1.5">Nama Usaha / Toko</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  required
-                  placeholder="Kedai Kopi Mantan"
-                  value={formData.businessName}
-                  onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-                  className="w-full px-4 py-2.5 pl-10 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#00C897]"
-                />
-                <Store className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
+            <div className="w-12 h-px bg-gray-200" />
+
+            <div className="flex items-center gap-2">
+              <div
+                className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs font-sans ${
+                  step >= 2 ? "bg-[#0A2540] text-white" : "bg-gray-200 text-gray-500"
+                }`}
+              >
+                2
               </div>
+              <span className={step >= 2 ? "text-[#0A2540] font-bold" : "text-gray-400"}>Bisnis</span>
             </div>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-[#0A2540] mb-1.5">Email Kerja</label>
-              <div className="relative">
-                <input
-                  type="email"
-                  required
-                  placeholder="budi@kopi.id"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-2.5 pl-10 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#00C897]"
-                />
-                <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-[#0A2540] mb-1.5">No. WhatsApp</label>
-              <div className="relative">
-                <input
-                  type="tel"
-                  required
-                  placeholder="08123456789"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#00C897]"
-                />
-                <Phone className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
-              </div>
-            </div>
-          </div>
-
+          {/* HEADER TITLE & SUBTITLE */}
           <div>
-            <label className="block text-xs font-bold text-[#0A2540] mb-1.5">Jenis Bisnis</label>
-            <select
-              value={formData.businessType}
-              onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#00C897]"
-            >
-              <option value="F&B / Restoran">F&B / Restoran & Kafe</option>
-              <option value="Toko Ritel & Mini Market">Toko Ritel & Mini Market</option>
-              <option value="Warung & Kelontong">Warung & Kelontong</option>
-              <option value="Jasa / Service">Jasa / Salon / Laundry</option>
-              <option value="Lainnya">Lainnya</option>
-            </select>
+            <h2 className="font-sans font-bold text-3xl text-[#0A2540] mb-1">
+              Buat Akun Anda
+            </h2>
+            <p className="text-xs text-gray-500 font-body">
+              Daftar gratis, tanpa kartu kredit.
+            </p>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold text-[#0A2540] mb-1.5">Password</label>
-            <div className="relative">
-              <input
-                type="password"
-                required
-                placeholder="Minimal 8 karakter"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full px-4 py-2.5 pl-10 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#00C897]"
-              />
-              <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
+          {/* FORM */}
+          <form onSubmit={handleNext} className="space-y-4">
+            {step === 1 ? (
+              <>
+                {/* NAMA LENGKAP */}
+                <div>
+                  <label className="block text-xs font-bold text-[#0A2540] mb-1.5 font-sans">
+                    Nama Lengkap <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Nama lengkap Anda"
+                    value={formData.fullName}
+                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    className="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 text-sm text-[#0A2540] font-body focus:outline-none focus:border-[#00C897] transition-colors shadow-sm"
+                  />
+                </div>
+
+                {/* EMAIL */}
+                <div>
+                  <label className="block text-xs font-bold text-[#0A2540] mb-1.5 font-sans">
+                    Email <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="email@bisnis.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 text-sm text-[#0A2540] font-body focus:outline-none focus:border-[#00C897] transition-colors shadow-sm"
+                  />
+                </div>
+
+                {/* PASSWORD */}
+                <div>
+                  <label className="block text-xs font-bold text-[#0A2540] mb-1.5 font-sans">
+                    Password <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      required
+                      placeholder="Min. 8 karakter"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      className="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 text-sm text-[#0A2540] font-body focus:outline-none focus:border-[#00C897] transition-colors shadow-sm pr-11"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* KONFIRMASI PASSWORD */}
+                <div>
+                  <label className="block text-xs font-bold text-[#0A2540] mb-1.5 font-sans">
+                    Konfirmasi Password <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      required
+                      placeholder="Ulangi password"
+                      value={formData.confirmPassword}
+                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                      className="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 text-sm text-[#0A2540] font-body focus:outline-none focus:border-[#00C897] transition-colors shadow-sm pr-11"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* STEP 2: BISNIS */}
+                <div>
+                  <label className="block text-xs font-bold text-[#0A2540] mb-1.5 font-sans">
+                    Nama Usaha / Toko <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: Kopi Kenangan Mantan"
+                    value={formData.businessName}
+                    onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
+                    className="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 text-sm text-[#0A2540] font-body focus:outline-none focus:border-[#00C897] transition-colors shadow-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#0A2540] mb-1.5 font-sans">
+                    Jenis Bisnis
+                  </label>
+                  <select
+                    value={formData.businessType}
+                    onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
+                    className="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 text-sm text-[#0A2540] font-body focus:outline-none focus:border-[#00C897] transition-colors shadow-sm"
+                  >
+                    <option value="F&B / Restoran">F&B / Restoran & Kafe</option>
+                    <option value="Toko Ritel & Mini Market">Toko Ritel & Mini Market</option>
+                    <option value="Warung & Kelontong">Warung & Kelontong</option>
+                    <option value="Jasa / Service">Jasa / Salon / Laundry</option>
+                    <option value="Lainnya">Lainnya</option>
+                  </select>
+                </div>
+              </>
+            )}
+
+            {/* SUBMIT BUTTON */}
+            <div className="pt-2">
+              <button
+                type="submit"
+                className="w-full py-3.5 bg-[#00C897] text-[#0A2540] font-bold rounded-xl text-sm hover:bg-[#00a87e] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#00C897]/20 font-body"
+              >
+                <span>{step === 1 ? "Lanjut" : "Buat Akun Sekarang"}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
-          </div>
+          </form>
 
-          <div className="pt-2">
-            <button
-              type="submit"
-              className="w-full py-3.5 bg-[#00C897] text-[#0A2540] font-bold rounded-xl text-sm hover:bg-[#00a87e] transition-colors flex items-center justify-center gap-2 shadow-md"
-            >
-              Buat Akun Merchant
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </form>
-
-        <div className="mt-6 pt-4 border-t border-gray-100 text-center text-xs text-gray-500">
-          Sudah punya akun?{" "}
-          <Link href="/login" className="text-[#00C897] font-bold hover:underline">
-            Masuk di sini
-          </Link>
+          {/* LOGIN LINK */}
+          <p className="text-xs text-gray-500 font-body text-center">
+            Sudah punya akun?{" "}
+            <Link href="/login" className="text-[#00C897] font-bold hover:underline">
+              Login
+            </Link>
+          </p>
         </div>
       </div>
     </div>

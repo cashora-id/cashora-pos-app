@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Lock, Mail, Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 
 export default function LoginPage() {
@@ -16,76 +16,154 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A2540] flex items-center justify-center p-4 pt-24 pb-12">
-      <div className="bg-white rounded-2xl p-8 sm:p-10 shadow-2xl w-full max-w-md border border-white/20">
-        <div className="text-center mb-8">
-          <Logo light={false} className="justify-center mb-3" />
-          <h1 className="font-sans font-bold text-2xl text-[#0A2540]">Login Merchant POS</h1>
-          <p className="text-xs text-gray-500 mt-1">Masuk ke Dashboard Pengelola Cashora</p>
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col lg:flex-row font-body">
+      {/* LEFT PANEL: DARK NAVY (40% WIDTH ON LG SCREEN) */}
+      <div className="lg:w-5/12 bg-[#0A2540] text-white p-8 lg:p-12 flex flex-col justify-between relative overflow-hidden min-h-[400px] lg:min-h-screen">
+        <div
+          className="absolute inset-0 opacity-[0.04] pointer-events-none"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+          aria-hidden="true"
+        />
+
+        {/* TOP LOGO */}
+        <div className="relative z-10">
+          <Logo light={true} />
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        {/* MIDDLE CONTENT: DASHBOARD CARD & TESTIMONIAL QUOTE */}
+        <div className="relative z-10 my-auto py-8 max-w-md space-y-8">
+          {/* MOCKUP DASHBOARD CARD */}
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/10 shadow-2xl">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-5 h-5 rounded-md bg-[#00C897]/20 flex items-center justify-center">
+                <span className="text-xs font-bold text-[#00C897]">C</span>
+              </div>
+              <span className="text-xs font-bold text-white font-sans">Dashboard Cashora</span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="bg-white/10 rounded-xl p-3.5 border border-white/5">
+                <p className="text-[10px] text-white/60 font-body mb-0.5">Pendapatan Hari Ini</p>
+                <p className="text-base font-bold font-sans text-[#00C897]">Rp 4,2Jt</p>
+              </div>
+              <div className="bg-white/10 rounded-xl p-3.5 border border-white/5">
+                <p className="text-[10px] text-white/60 font-body mb-0.5">Transaksi</p>
+                <p className="text-base font-bold font-sans text-[#00C897]">128x</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#00C897] animate-pulse" />
+              <span className="text-[11px] text-white/70 font-body">Semua outlet online</span>
+            </div>
+          </div>
+
+          {/* TESTIMONIAL QUOTE */}
+          <div className="space-y-2">
+            <p className="text-xs sm:text-sm text-white/80 italic leading-relaxed font-body">
+              &ldquo;Cashora mengubah cara kami mengelola 5 cabang. Semuanya dari satu layar.&rdquo;
+            </p>
+            <p className="text-[11px] text-white/50 font-body">
+              — Ahmad Fauzi, Retail Elektronik Fauzi
+            </p>
+          </div>
+        </div>
+
+        {/* BOTTOM SECURITY BADGE */}
+        <div className="relative z-10 flex items-center gap-2 text-xs font-semibold text-[#00C897]">
+          <ShieldCheck className="w-4 h-4 shrink-0 stroke-[2.5]" />
+          <span>Terproteksi enkripsi bank-grade</span>
+        </div>
+      </div>
+
+      {/* RIGHT PANEL: FORM (60% WIDTH ON LG SCREEN) */}
+      <div className="lg:w-7/12 p-8 lg:p-16 flex items-center justify-center min-h-[500px]">
+        <div className="w-full max-w-md space-y-8">
+          {/* HEADER TITLE & SUBTITLE */}
           <div>
-            <label className="block text-xs font-bold text-[#0A2540] mb-1.5">Email / No. HP</label>
-            <div className="relative">
+            <h1 className="font-sans font-bold text-3xl sm:text-4xl text-[#0A2540] mb-2">
+              Masuk ke Akun Anda
+            </h1>
+            <p className="text-xs sm:text-sm text-gray-500 font-body">
+              Belum punya akun?{" "}
+              <Link href="/register" className="text-[#00C897] font-semibold hover:underline">
+                Daftar gratis
+              </Link>
+            </p>
+          </div>
+
+          {/* LOGIN FORM */}
+          <form onSubmit={handleLogin} className="space-y-5">
+            {/* EMAIL INPUT */}
+            <div>
+              <label className="block text-xs font-bold text-[#0A2540] mb-1.5 font-sans">
+                Email
+              </label>
               <input
-                type="text"
+                type="email"
                 required
-                placeholder="merchant@cashora.id"
+                placeholder="email@bisnis.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2.5 pl-10 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#00C897]"
+                className="w-full px-4 py-3.5 bg-white rounded-xl border border-gray-200 text-sm text-[#0A2540] font-body focus:outline-none focus:border-[#00C897] transition-colors shadow-sm"
               />
-              <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
             </div>
-          </div>
 
-          <div>
-            <label className="block text-xs font-bold text-[#0A2540] mb-1.5">Password</label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                required
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2.5 pl-10 pr-10 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#00C897]"
-              />
-              <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-3 text-gray-400 hover:text-gray-600"
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
+            {/* PASSWORD INPUT */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-bold text-[#0A2540] font-sans">
+                  Password
+                </label>
+                <Link href="/lupa-password" className="text-xs font-semibold text-[#00C897] hover:underline font-body">
+                  Lupa password?
+                </Link>
+              </div>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder="Masukkan password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3.5 bg-white rounded-xl border border-gray-200 text-sm text-[#0A2540] font-body focus:outline-none focus:border-[#00C897] transition-colors shadow-sm pr-11"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div className="flex items-center justify-between text-xs">
-            <label className="flex items-center gap-2 cursor-pointer text-gray-600">
-              <input type="checkbox" className="rounded border-gray-300 text-[#00C897] focus:ring-[#00C897]" />
-              Ingat Saya
-            </label>
-            <a href="#" className="text-[#00C897] font-semibold hover:underline">
-              Lupa Password?
-            </a>
-          </div>
+            {/* SUBMIT BUTTON */}
+            <button
+              type="submit"
+              className="w-full py-4 bg-[#00C897] text-[#0A2540] font-bold rounded-xl text-sm hover:bg-[#00a87e] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#00C897]/20 font-body"
+            >
+              <span>Masuk</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </form>
 
-          <button
-            type="submit"
-            className="w-full py-3.5 bg-[#00C897] text-[#0A2540] font-bold rounded-xl text-sm hover:bg-[#00a87e] transition-colors flex items-center justify-center gap-2 shadow-md"
-          >
-            <LogIn className="w-4 h-4" />
-            Masuk ke Dashboard
-          </button>
-        </form>
-
-        <div className="mt-8 pt-6 border-t border-gray-100 text-center text-xs text-gray-500">
-          Belum punya akun?{" "}
-          <Link href="/register" className="text-[#00C897] font-bold hover:underline">
-            Daftar Gratis Sekarang
-          </Link>
+          {/* TERMS & PRIVACY FOOTER */}
+          <p className="text-[11px] text-gray-400 font-body text-center leading-relaxed">
+            Dengan masuk, Anda menyetujui{" "}
+            <Link href="/syarat-ketentuan" className="text-[#00C897] font-semibold hover:underline">
+              Syarat & Ketentuan
+            </Link>{" "}
+            dan{" "}
+            <Link href="/kebijakan-privasi" className="text-[#00C897] font-semibold hover:underline">
+              Kebijakan Privasi
+            </Link>{" "}
+            Cashora.
+          </p>
         </div>
       </div>
     </div>

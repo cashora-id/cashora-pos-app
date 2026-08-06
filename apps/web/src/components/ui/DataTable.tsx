@@ -11,6 +11,10 @@ import {
   SortingState,
   ColumnFiltersState,
   useReactTable,
+  HeaderGroup,
+  Header,
+  Row,
+  Cell,
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight, ArrowUpDown, Search } from "lucide-react";
 
@@ -69,9 +73,9 @@ export function DataTable<TData, TValue>({
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse font-body text-xs sm:text-sm">
             <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
+              {table.getHeaderGroups().map((headerGroup: HeaderGroup<TData>) => (
                 <tr key={headerGroup.id} className="border-b border-gray-100 bg-[#F5F7FA] font-sans text-[#0A2540]">
-                  {headerGroup.headers.map((header) => (
+                  {headerGroup.headers.map((header: Header<TData, unknown>) => (
                     <th key={header.id} className="py-3.5 px-4 font-bold text-xs">
                       {header.isPlaceholder ? null : (
                         <div
@@ -93,9 +97,9 @@ export function DataTable<TData, TValue>({
             </thead>
             <tbody className="divide-y divide-gray-50">
               {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
+                table.getRowModel().rows.map((row: Row<TData>) => (
                   <tr key={row.id} className="hover:bg-gray-50/50 transition-colors">
-                    {row.getVisibleCells().map((cell) => (
+                    {row.getVisibleCells().map((cell: Cell<TData, unknown>) => (
                       <td key={cell.id} className="py-3.5 px-4 text-gray-700">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </td>

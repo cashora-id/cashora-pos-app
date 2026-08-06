@@ -8,6 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint && tsc --noEmit",
+    "test": "echo \"No tests specified\"",
+    "test:coverage": "echo \"No tests specified\"",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

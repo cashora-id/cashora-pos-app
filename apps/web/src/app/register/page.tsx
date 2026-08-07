@@ -2,13 +2,21 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Eye, EyeOff, ArrowRight, Check } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff, ArrowRight, Check, Loader2 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
+import { api } from "@/lib/api/axios";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const setAuth = useAuthStore((state) => state.setAuth);
+
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -19,12 +27,38 @@ export default function RegisterPage() {
     businessType: "F&B / Restoran",
   });
 
-  const handleNext = (e: React.FormEvent) => {
+  const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step === 1) {
+      if (formData.password !== formData.confirmPassword) {
+        setErrorMessage("Password dan konfirmasi password tidak cocok.");
+        return;
+      }
+      setErrorMessage("");
       setStep(2);
     } else {
-      alert(`Registrasi berhasil untuk ${formData.fullName} - ${formData.businessName}`);
+      setIsLoading(true);
+      setErrorMessage("");
+      try {
+        const response = await api.post("/auth/register", {
+          fullName: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+          businessName: formData.businessName,
+          businessType: formData.businessType,
+        });
+
+        const { user, accessToken } = response.data;
+        setAuth(user, accessToken);
+        router.push("/dashboard");
+      } catch (err: any) {
+        const message =
+          err.response?.data?.message ||
+          "Gagal mendaftar. Silakan coba kembali beberapa saat lagi.";
+        setErrorMessage(message);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -127,6 +161,13 @@ export default function RegisterPage() {
             </p>
           </div>
 
+          {/* ERROR ALERT */}
+          {errorMessage && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 font-body">
+              {errorMessage}
+            </div>
+          )}
+
           {/* FORM */}
           <form onSubmit={handleNext} className="space-y-4">
             {step === 1 ? (
@@ -222,7 +263,7 @@ export default function RegisterPage() {
                     placeholder="Contoh: Kopi Kenangan Mantan"
                     value={formData.businessName}
                     onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-                    className="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 text-sm text-[#0A2540] font-body focus:outline-none focus:border-[#00C897] transition-colors shadow-sm"
+                    className="w-full px-4 py-3 bg-[#ffffff] rounded-xl border border-gray-200 text-sm text-[#0A2540] font-body focus:outline-none focus:border-[#00C897] transition-colors shadow-sm"
                   />
                 </div>
 
@@ -249,10 +290,20 @@ export default function RegisterPage() {
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full py-3.5 bg-[#00C897] text-[#0A2540] font-bold rounded-xl text-sm hover:bg-[#00a87e] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#00C897]/20 font-body"
+                disabled={isLoading}
+                className="w-full py-3.5 bg-[#00C897] text-[#0A2540] font-bold rounded-xl text-sm hover:bg-[#00a87e] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#00C897]/20 font-body disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <span>{step === 1 ? "Lanjut" : "Buat Akun Sekarang"}</span>
-                <ArrowRight className="w-4 h-4" />
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Memproses...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>{step === 1 ? "Lanjut" : "Buat Akun Sekarang"}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
               </button>
             </div>
           </form>

@@ -2,17 +2,41 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Eye, EyeOff, ArrowRight, ShieldCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff, ArrowRight, ShieldCheck, Loader2 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
+import { api } from "@/lib/api/axios";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const setAuth = useAuthStore((state) => state.setAuth);
+
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Login simulasi berhasil untuk ${email}`);
+    setIsLoading(true);
+    setErrorMessage("");
+
+    try {
+      const response = await api.post("/auth/login", { email, password });
+      const { user, accessToken } = response.data;
+
+      setAuth(user, accessToken);
+      router.push("/dashboard");
+    } catch (err: any) {
+      const message =
+        err.response?.data?.message ||
+        "Gagal masuk. Periksa kembali email dan password Anda.";
+      setErrorMessage(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -96,6 +120,13 @@ export default function LoginPage() {
             </p>
           </div>
 
+          {/* ERROR ALERT */}
+          {errorMessage && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 font-body">
+              {errorMessage}
+            </div>
+          )}
+
           {/* LOGIN FORM */}
           <form onSubmit={handleLogin} className="space-y-5">
             {/* EMAIL INPUT */}
@@ -145,10 +176,20 @@ export default function LoginPage() {
             {/* SUBMIT BUTTON */}
             <button
               type="submit"
-              className="w-full py-4 bg-[#00C897] text-[#0A2540] font-bold rounded-xl text-sm hover:bg-[#00a87e] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#00C897]/20 font-body"
+              disabled={isLoading}
+              className="w-full py-4 bg-[#00C897] text-[#0A2540] font-bold rounded-xl text-sm hover:bg-[#00a87e] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#00C897]/20 font-body disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span>Masuk</span>
-              <ArrowRight className="w-4 h-4" />
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Memproses...</span>
+                </>
+              ) : (
+                <>
+                  <span>Masuk</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
           </form>
 

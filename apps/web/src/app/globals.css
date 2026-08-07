@@ -6,9 +6,35 @@
 
 @layer base {
   :root {
+    /* BRAND TOKENS */
     --brand-navy: #0A2540;
+    --brand-navy-light: #12365C;
+    --brand-navy-dark: #06182B;
     --brand-emerald: #00C897;
+    --brand-emerald-dark: #00A87E;
+    --brand-emerald-light: #E6F9F4;
     --brand-bg: #F5F7FA;
+
+    /* SEMANTIC STATE TOKENS */
+    --state-success: #10B981;
+    --state-success-bg: #ECFDF5;
+    --state-success-border: #A7F3D0;
+    --state-success-text: #065F46;
+
+    --state-warning: #F59E0B;
+    --state-warning-bg: #FFFBEB;
+    --state-warning-border: #FDE68A;
+    --state-warning-text: #92400E;
+
+    --state-danger: #EF4444;
+    --state-danger-bg: #FEF2F2;
+    --state-danger-border: #FECACA;
+    --state-danger-text: #991B1B;
+
+    --state-info: #3B82F6;
+    --state-info-bg: #EFF6FF;
+    --state-info-border: #BFDBFE;
+    --state-info-text: #1E40AF;
   }
 
   html {
@@ -17,8 +43,8 @@
   }
 
   body {
-    background-color: #F5F7FA;
-    color: #0A2540;
+    background-color: var(--brand-bg);
+    color: var(--brand-navy);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -26,6 +52,47 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* UTILITY COMPONENT TOKENS FOR CONSISTENCY */
+@layer components {
+  /* TOAST VARIANT UTILITIES */
+  .toast-success {
+    @apply bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] shadow-sm rounded-xl p-4 flex items-center gap-3;
+  }
+
+  .toast-danger {
+    @apply bg-[#FEF2F2] border border-[#FECACA] text-[#991B1B] shadow-sm rounded-xl p-4 flex items-center gap-3;
+  }
+
+  .toast-warning {
+    @apply bg-[#FFFBEB] border border-[#FDE68A] text-[#92400E] shadow-sm rounded-xl p-4 flex items-center gap-3;
+  }
+
+  .toast-info {
+    @apply bg-[#EFF6FF] border border-[#BFDBFE] text-[#1E40AF] shadow-sm rounded-xl p-4 flex items-center gap-3;
+  }
+
+  /* BADGE VARIANT UTILITIES */
+  .badge-emerald {
+    @apply bg-[#E6F9F4] text-[#00A87E] font-semibold text-xs px-2.5 py-1 rounded-full inline-flex items-center gap-1.5;
+  }
+
+  .badge-navy {
+    @apply bg-[#0A2540]/10 text-[#0A2540] font-semibold text-xs px-2.5 py-1 rounded-full inline-flex items-center gap-1.5;
+  }
+
+  .badge-success {
+    @apply bg-[#ECFDF5] text-[#065F46] font-semibold text-xs px-2.5 py-1 rounded-full inline-flex items-center gap-1.5;
+  }
+
+  .badge-warning {
+    @apply bg-[#FFFBEB] text-[#92400E] font-semibold text-xs px-2.5 py-1 rounded-full inline-flex items-center gap-1.5;
+  }
+
+  .badge-danger {
+    @apply bg-[#FEF2F2] text-[#991B1B] font-semibold text-xs px-2.5 py-1 rounded-full inline-flex items-center gap-1.5;
   }
 }
 

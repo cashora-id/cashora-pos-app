@@ -2,14 +2,12 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowRight, ShieldCheck, Loader2 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { api } from "@/lib/api/axios";
 import { useAuthStore } from "@/store/useAuthStore";
 
 export default function LoginPage() {
-  const router = useRouter();
   const setAuth = useAuthStore((state) => state.setAuth);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -23,26 +21,33 @@ export default function LoginPage() {
     setIsLoading(true);
     setErrorMessage("");
 
+    const mockUser = {
+      id: "owner-1",
+      name: "Budi Santoso",
+      email: email || "owner@cashora.id",
+      role: "OWNER",
+    };
+    const mockToken = "demo-access-token-jwt";
+
     try {
-      const response = await api.post("/auth/login", { email, password });
-      const { user, accessToken } = response.data;
-      setAuth(user, accessToken);
-      router.push("/owner/menu");
+      // Fast API call with 1-second timeout
+      const response = await api.post(
+        "/auth/login",
+        { email, password },
+        { timeout: 1000 }
+      );
+      if (response.data?.user) {
+        setAuth(response.data.user, response.data.accessToken);
+      } else {
+        setAuth(mockUser, mockToken);
+      }
     } catch (err: any) {
-      // Standalone Frontend / Demo Mode Fallback when Backend is offline
-      const mockUser = {
-        id: "owner-1",
-        name: "Budi Santoso",
-        email: email || "owner@cashora.id",
-        role: "OWNER",
-      };
-      const mockToken = "demo-access-token-jwt";
+      // Fallback demo mode when API backend is offline
       setAuth(mockUser, mockToken);
-      
-      // Redirect to Owner Dashboard
-      router.push("/owner/menu");
     } finally {
       setIsLoading(false);
+      // Instant redirect to Owner Dashboard
+      window.location.href = "/owner/menu";
     }
   };
 

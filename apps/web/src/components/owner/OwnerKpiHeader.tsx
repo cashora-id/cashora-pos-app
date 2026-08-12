@@ -101,9 +101,7 @@ export function OwnerKpiHeader({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* LEFT BRAND LOGO & BADGE */}
           <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-3 group">
-              <Logo light={false} />
-            </Link>
+            <Logo light={false} />
             <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold border border-slate-200 font-sans">
               Owner Dashboard
             </span>

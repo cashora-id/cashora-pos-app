@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Eye, EyeOff, ArrowRight, ShieldCheck, Loader2 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { api } from "@/lib/api/axios";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore, UserProfile } from "@/store/useAuthStore";
 
 export default function LoginPage() {
   const setAuth = useAuthStore((state) => state.setAuth);
@@ -21,7 +21,7 @@ export default function LoginPage() {
     setIsLoading(true);
     setErrorMessage("");
 
-    const mockUser = {
+    const mockUser: UserProfile = {
       id: "owner-1",
       name: "Budi Santoso",
       email: email || "owner@cashora.id",

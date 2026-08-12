@@ -16,6 +16,7 @@ const PUBLIC_ROUTES = [
   "/login",
   "/register",
   "/api/auth",
+  "/owner",
 ];
 const ADMIN_ONLY_ROUTES = ["/admin"];
 

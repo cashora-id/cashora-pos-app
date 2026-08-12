@@ -40,8 +40,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className="scroll-smooth bg-[#0A2540]">
+    <html lang="id" className="scroll-smooth bg-[#0A2540]" suppressHydrationWarning>
       <body
+        suppressHydrationWarning
         className={`${plusJakartaSans.variable} ${inter.variable} antialiased font-body bg-[#F5F7FA] text-[#0A2540] min-h-screen flex flex-col`}
       >
         <QueryProvider>

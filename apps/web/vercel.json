@@ -2,5 +2,12 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "buildCommand": "pnpm --filter cashora-web run build",
-  "installCommand": "pnpm install"
+  "installCommand": "pnpm install",
+  "outputDirectory": ".next",
+  "cleanUrls": true,
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
+  }
 }

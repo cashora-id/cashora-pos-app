@@ -368,8 +368,8 @@ export function RegisterStoreModal({
                     </div>
                   </div>
 
-                  {/* JENIS USAHA DROPDOWN (MATCHING MOCKUP SCREENSHOT 1) */}
-                  <div className="pt-2">
+                  {/* JENIS USAHA DROPDOWN (PINNED AT BOTTOM OUTSIDE CATEGORY SCROLL CONTAINER) */}
+                  <div className="pt-3 border-t border-slate-100 bg-white sticky bottom-0 z-10">
                     <label className="block text-xs font-bold text-[#0A2540] mb-2 font-sans">
                       Jenis usaha <span className="text-rose-500">*</span>
                     </label>

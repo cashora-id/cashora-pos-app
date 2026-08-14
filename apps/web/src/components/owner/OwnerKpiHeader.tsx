@@ -96,8 +96,11 @@ export function OwnerKpiHeader({
 
   return (
     <>
-      {/* STICKY TOP HEADER NAV */}
-      <header className="sticky top-0 w-full z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all font-body">
+      {/* STICKY TOP HEADER NAV (tour-header) */}
+      <header
+        id="tour-header"
+        className="sticky top-0 w-full z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all font-body"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* LEFT BRAND LOGO & BADGE */}
           <div className="flex items-center gap-3">
@@ -187,8 +190,11 @@ export function OwnerKpiHeader({
         </div>
       </header>
 
-      {/* HERO KPI SUMMARY SECTION (DARK NAVY #0A2540) */}
-      <section className="bg-gradient-to-b from-[#0A2540] to-[#0d3154] text-white pt-8 pb-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden transition-all font-body">
+      {/* HERO KPI SUMMARY SECTION (tour-period-kpis) */}
+      <section
+        id="tour-period-kpis"
+        className="bg-gradient-to-b from-[#0A2540] to-[#0d3154] text-white pt-8 pb-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden transition-all font-body"
+      >
         <div
           className="absolute -top-24 right-0 w-[500px] h-[500px] rounded-full opacity-20 pointer-events-none"
           style={{

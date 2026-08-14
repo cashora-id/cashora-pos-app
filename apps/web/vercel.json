@@ -4,10 +4,5 @@
   "buildCommand": "pnpm --filter cashora-web run build",
   "installCommand": "pnpm install --no-frozen-lockfile",
   "outputDirectory": ".next",
-  "cleanUrls": true,
-  "git": {
-    "deploymentEnabled": {
-      "main": true
-    }
-  }
+  "cleanUrls": true
 }

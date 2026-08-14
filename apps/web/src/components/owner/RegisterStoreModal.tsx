@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   X,
   Check,
@@ -57,9 +58,14 @@ export function RegisterStoreModal({
   onClose,
   onStoreCreated,
 }: RegisterStoreModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4 | 5>(1);
   const [isSuccess, setIsSuccess] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Form State
   const [formData, setFormData] = useState<NewStoreData>({
@@ -81,7 +87,7 @@ export function RegisterStoreModal({
   const [confirmedCheckbox, setConfirmedCheckbox] = useState(false);
   const [stepError, setStepError] = useState("");
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   // 13 FULL CATEGORIES MATCHING MOCKUP SCREENSHOTS
   const categories = [
@@ -181,11 +187,11 @@ export function RegisterStoreModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-[#0A2540]/70 backdrop-blur-md z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden animate-in fade-in duration-200 font-body">
-      <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-4xl overflow-hidden flex flex-col max-h-[85vh]">
+  return createPortal(
+    <div className="fixed inset-0 bg-[#0A2540]/75 backdrop-blur-md z-[99999] flex items-center justify-center p-4 sm:p-6 overflow-hidden animate-in fade-in duration-200 font-body">
+      <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-4xl overflow-hidden flex flex-col max-h-[85vh] my-auto">
         {/* MODAL HEADER */}
-        <div className="bg-gradient-to-r from-[#0A2540] to-[#0d3154] text-white p-6 relative">
+        <div className="bg-gradient-to-r from-[#0A2540] to-[#0d3154] text-white p-6 relative shrink-0">
           <button
             onClick={onClose}
             className="absolute top-5 right-5 p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
@@ -808,7 +814,7 @@ export function RegisterStoreModal({
 
         {/* MODAL FOOTER BUTTONS */}
         {!isSuccess && (
-          <div className="p-4 sm:p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+          <div className="p-4 sm:p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-between shrink-0">
             <button
               onClick={handleBack}
               className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors font-sans"
@@ -831,6 +837,7 @@ export function RegisterStoreModal({
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

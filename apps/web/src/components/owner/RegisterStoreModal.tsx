@@ -183,7 +183,7 @@ export function RegisterStoreModal({
 
   return (
     <div className="fixed inset-0 bg-[#0A2540]/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200 font-body">
-      <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-4xl overflow-hidden flex flex-col max-h-[85vh] h-[720px] my-auto">
+      <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-4xl overflow-hidden flex flex-col max-h-[92vh] my-auto">
         {/* MODAL HEADER */}
         <div className="bg-gradient-to-r from-[#0A2540] to-[#0d3154] text-white p-6 relative">
           <button
@@ -315,7 +315,7 @@ export function RegisterStoreModal({
                       Kategori usaha <span className="text-rose-500">*</span>
                     </label>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-1">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-h-[290px] overflow-y-auto pr-1 p-1">
                       {categories.map((cat) => {
                         const IconComp = cat.icon;
                         const isSelected = formData.category === cat.name;

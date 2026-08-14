@@ -9,10 +9,11 @@ import {
   ShoppingBag,
   Coffee,
   MoreVertical,
-  ExternalLink,
   ChevronRight,
+  Plus,
+  Sparkles,
+  HelpCircle,
 } from "lucide-react";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 
 interface StoreItem {
@@ -155,6 +156,7 @@ export function OwnerStoreGrid() {
 
       {/* STORE CARDS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* EXISTING STORES */}
         {filteredStores.map((store) => (
           <article
             key={store.id}
@@ -243,13 +245,57 @@ export function OwnerStoreGrid() {
                   onClick={() => alert(`Membuka Dashboard Kasir ${store.name}`)}
                   className="rounded-xl border-slate-200 text-xs font-bold text-[#0A2540] hover:bg-[#0A2540] hover:text-[#00C897] transition-all"
                 >
-                  <span>Kelola</span>
+                  <span>Lihat Detail & Monitoring</span>
                   <ChevronRight className="w-3.5 h-3.5 ml-1" />
                 </Button>
               </div>
             </div>
           </article>
         ))}
+
+        {/* DAFTARKAN TOKO BARU CARD (PLUS BUTTON CARD) */}
+        <button
+          type="button"
+          onClick={() => alert("Membuka form Daftarkan Toko Baru / Tambah Profil Bisnis...")}
+          className="group flex flex-col items-center justify-center p-8 rounded-3xl border-2 border-dashed border-slate-300 bg-white/60 hover:bg-white hover:border-[#00C897] shadow-sm hover:shadow-lg transition-all duration-300 min-h-[280px] text-center"
+        >
+          <div className="w-14 h-14 rounded-full bg-emerald-100/70 text-[#00C897] flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-[#00C897] group-hover:text-[#0A2540] transition-all">
+            <Plus className="w-7 h-7" />
+          </div>
+          <h3 className="text-base font-extrabold text-[#0A2540] group-hover:text-[#00C897] transition-colors font-sans mb-1">
+            Daftarkan Toko Baru
+          </h3>
+          <p className="text-xs text-slate-500 max-w-[220px] mb-4 leading-relaxed">
+            Miliki cabang atau konsep bisnis baru? Tambahkan ke portal owner.
+          </p>
+          <span className="inline-flex items-center gap-1 text-xs font-extrabold text-[#00A87E] group-hover:underline">
+            Tambah Profil Bisnis <ChevronRight className="w-3.5 h-3.5" />
+          </span>
+        </button>
+      </div>
+
+      {/* CS SUPPORT BANNER AT THE BOTTOM */}
+      <div className="mt-10 rounded-3xl bg-white border border-slate-200/80 p-6 sm:p-7 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-[#0A2540] text-[#00C897] flex items-center justify-center shrink-0 shadow-md">
+            <Sparkles className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-base font-extrabold text-[#0A2540] font-sans">
+              Butuh bantuan mengoptimalkan laporan keuangan multi-toko?
+            </h3>
+            <p className="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">
+              Tim Support Spesialis Cashora siap mendampingi pengaturan integrasi laporan & kasir POS secara gratis.
+            </p>
+          </div>
+        </div>
+
+        <Button
+          onClick={() => alert("Menghubungi CS Support Cashora...")}
+          className="bg-[#0A2540] text-white hover:bg-[#0A2540]/90 px-6 py-3 rounded-2xl text-xs font-extrabold shrink-0 shadow-md hover:shadow-lg transition-all"
+        >
+          Hubungi CS Support
+        </Button>
       </div>
     </div>
   );

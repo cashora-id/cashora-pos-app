@@ -20,6 +20,7 @@ import {
   CreditCard,
   Mail,
   HelpCircle,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { motion, AnimatePresence } from "framer-motion";

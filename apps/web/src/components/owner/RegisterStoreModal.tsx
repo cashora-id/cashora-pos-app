@@ -109,7 +109,7 @@ export function RegisterStoreModal({
   };
 
   return (
-    <div className="fixed inset-[#0A2540]/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
+    <div className="fixed inset-0 bg-[#0A2540]/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
       <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh] my-auto">
         {/* MODAL HEADER */}
         <div className="bg-gradient-to-r from-[#0A2540] to-[#0d3154] text-white p-6 relative">

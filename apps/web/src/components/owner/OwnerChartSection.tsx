@@ -27,7 +27,10 @@ export function OwnerChartSection() {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200/80 mb-10 transition-all font-body">
+    <div
+      id="tour-chart"
+      className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200/80 mb-10 transition-all font-body"
+    >
       {/* HEADER CONTROLS */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 pb-4 border-b border-slate-100">
         <div>
@@ -181,7 +184,7 @@ export function OwnerChartSection() {
       <div className="relative w-full h-72 sm:h-80 mb-8 bg-slate-50/70 rounded-2xl p-2 sm:p-3 border border-slate-100">
         <svg viewBox="0 0 960 260" className="w-full h-full overflow-visible">
           <defs>
-            <linearGradient id="chartGradientSales" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="multiChartGradientSales" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#0A2540" stopOpacity="0.15" />
               <stop offset="100%" stopColor="#0A2540" stopOpacity="0.0" />
             </linearGradient>
@@ -216,18 +219,18 @@ export function OwnerChartSection() {
           ].map((item, idx) => (
             <g key={idx}>
               <line x1={item.x} y1="25" x2={item.x} y2="225" stroke="#F1F5F9" strokeWidth="1" />
-              <text x={item.x} y="250" textAnchor="middle" className="text-[11px] fill-slate-500 font-semibold">
+              <text x={item.x} y="250" textAnchor="middle" className="text-[11px] fill-slate-500 font-semibold cursor-pointer">
                 {item.label}
               </text>
             </g>
           ))}
 
-          {/* COMBINED LINE */}
+          {/* COMBINED LINE & POINTS */}
           {visibleLines.combined && (
             <>
               <path
                 d="M 45 175 C 134.5 175, 134.5 129, 224 129 C 313.5 129, 313.5 51, 403 51 C 492.5 51, 492.5 116, 582 116 C 671.5 116, 671.5 141, 761 141 C 850.5 141, 850.5 84, 940 84 L 940 225 L 45 225 Z"
-                fill="url(#chartGradientSales)"
+                fill="url(#multiChartGradientSales)"
               />
               <path
                 d="M 45 175 C 134.5 175, 134.5 129, 224 129 C 313.5 129, 313.5 51, 403 51 C 492.5 51, 492.5 116, 582 116 C 671.5 116, 671.5 141, 761 141 C 850.5 141, 850.5 84, 940 84"
@@ -236,40 +239,124 @@ export function OwnerChartSection() {
                 strokeWidth="3.5"
                 strokeLinecap="round"
               />
+              <g>
+                {[
+                  { cx: 45, cy: 175 },
+                  { cx: 224, cy: 129 },
+                  { cx: 403, cy: 51 },
+                  { cx: 582, cy: 116 },
+                  { cx: 761, cy: 141 },
+                  { cx: 940, cy: 84 },
+                ].map((pt, idx) => (
+                  <circle
+                    key={idx}
+                    cx={pt.cx}
+                    cy={pt.cy}
+                    r="4.5"
+                    fill="#0A2540"
+                    stroke="#FFFFFF"
+                    strokeWidth="2"
+                    className="cursor-pointer shadow-sm hover:scale-125 transition-transform"
+                  />
+                ))}
+              </g>
             </>
           )}
 
           {/* RETAIL MART LINE (BLUE) */}
           {visibleLines.retail && (
-            <path
-              d="M 45 192 C 134.5 192, 134.5 163, 224 163 C 313.5 163, 313.5 130, 403 130 C 492.5 130, 492.5 151, 582 151 C 671.5 151, 671.5 167, 761 167 C 850.5 167, 850.5 148, 940 148"
-              fill="none"
-              stroke="#3B82F6"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
+            <g>
+              <path
+                d="M 45 192 C 134.5 192, 134.5 163, 224 163 C 313.5 163, 313.5 130, 403 130 C 492.5 130, 492.5 151, 582 151 C 671.5 151, 671.5 167, 761 167 C 850.5 167, 850.5 148, 940 148"
+                fill="none"
+                stroke="#3B82F6"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+              {[
+                { cx: 45, cy: 192 },
+                { cx: 224, cy: 163 },
+                { cx: 403, cy: 130 },
+                { cx: 582, cy: 151 },
+                { cx: 761, cy: 167 },
+                { cx: 940, cy: 148 },
+              ].map((pt, idx) => (
+                <circle
+                  key={idx}
+                  cx={pt.cx}
+                  cy={pt.cy}
+                  r="3.5"
+                  fill="#3B82F6"
+                  stroke="#FFFFFF"
+                  strokeWidth="2"
+                  className="cursor-pointer"
+                />
+              ))}
+            </g>
           )}
 
           {/* WARUNG MAKAN LINE (GREEN) */}
           {visibleLines.warung && (
-            <path
-              d="M 45 207 C 134.5 207, 134.5 191, 224 191 C 313.5 191, 313.5 145, 403 145 C 492.5 145, 492.5 189, 582 189 C 671.5 189, 671.5 199, 761 199 C 850.5 199, 850.5 161, 940 161"
-              fill="none"
-              stroke="#10B981"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
+            <g>
+              <path
+                d="M 45 207 C 134.5 207, 134.5 191, 224 191 C 313.5 191, 313.5 145, 403 145 C 492.5 145, 492.5 189, 582 189 C 671.5 189, 671.5 199, 761 199 C 850.5 199, 850.5 161, 940 161"
+                fill="none"
+                stroke="#10B981"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+              {[
+                { cx: 45, cy: 207 },
+                { cx: 224, cy: 191 },
+                { cx: 403, cy: 145 },
+                { cx: 582, cy: 189 },
+                { cx: 761, cy: 199 },
+                { cx: 940, cy: 161 },
+              ].map((pt, idx) => (
+                <circle
+                  key={idx}
+                  cx={pt.cx}
+                  cy={pt.cy}
+                  r="3.5"
+                  fill="#10B981"
+                  stroke="#FFFFFF"
+                  strokeWidth="2"
+                  className="cursor-pointer"
+                />
+              ))}
+            </g>
           )}
 
           {/* KOPI BUDI LINE (AMBER) */}
           {visibleLines.kopi && (
-            <path
-              d="M 45 225 C 134.5 225, 134.5 225, 224 225 C 313.5 225, 313.5 225, 403 225 C 492.5 225, 492.5 225, 582 225 C 671.5 225, 671.5 225, 761 225 C 850.5 225, 850.5 225, 940 225"
-              fill="none"
-              stroke="#F59E0B"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
+            <g>
+              <path
+                d="M 45 225 C 134.5 225, 134.5 225, 224 225 C 313.5 225, 313.5 225, 403 225 C 492.5 225, 492.5 225, 582 225 C 671.5 225, 671.5 225, 761 225 C 850.5 225, 850.5 225, 940 225"
+                fill="none"
+                stroke="#F59E0B"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+              {[
+                { cx: 45, cy: 225 },
+                { cx: 224, cy: 225 },
+                { cx: 403, cy: 225 },
+                { cx: 582, cy: 225 },
+                { cx: 761, cy: 225 },
+                { cx: 940, cy: 225 },
+              ].map((pt, idx) => (
+                <circle
+                  key={idx}
+                  cx={pt.cx}
+                  cy={pt.cy}
+                  r="3.5"
+                  fill="#F59E0B"
+                  stroke="#FFFFFF"
+                  strokeWidth="2"
+                  className="cursor-pointer"
+                />
+              ))}
+            </g>
           )}
         </svg>
       </div>

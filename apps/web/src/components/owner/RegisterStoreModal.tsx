@@ -13,6 +13,10 @@ import {
   Zap,
   ShieldCheck,
   Wrench,
+  Briefcase,
+  GraduationCap,
+  Sprout,
+  Hotel,
   CheckCircle2,
   Calendar as CalendarIcon,
   QrCode,
@@ -21,6 +25,7 @@ import {
   Mail,
   HelpCircle,
   ChevronRight,
+  ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -78,6 +83,7 @@ export function RegisterStoreModal({
 
   if (!isOpen) return null;
 
+  // 13 FULL CATEGORIES MATCHING MOCKUP SCREENSHOTS
   const categories = [
     { id: "culinary", name: "Restoran & Kuliner", desc: "Restoran, warung makan, katering, dan usaha makanan.", icon: Utensils },
     { id: "retail", name: "Retail & Toko Umum", desc: "Toko yang melayani penjualan grosir, eceran, atau keduanya.", icon: ShoppingBag },
@@ -88,7 +94,30 @@ export function RegisterStoreModal({
     { id: "electronics", name: "Elektronik & Teknologi", desc: "Penjualan perangkat elektronik, gadget, dan aksesori.", icon: Zap },
     { id: "health", name: "Kesehatan & Kecantikan", desc: "Apotek, klinik, salon, spa, dan produk perawatan.", icon: ShieldCheck },
     { id: "automotive", name: "Otomotif", desc: "Penjualan kendaraan, suku cadang, dan jasa otomotif.", icon: Wrench },
+    { id: "services", name: "Jasa & Profesional", desc: "Usaha jasa, konsultasi, dan layanan berbasis reservasi.", icon: Briefcase },
+    { id: "education", name: "Pendidikan & Pelatihan", desc: "Sekolah, kursus, bimbingan belajar, dan pelatihan.", icon: GraduationCap },
+    { id: "agriculture", name: "Pertanian & Peternakan", desc: "Toko sarana produksi, hasil tani, ternak, dan perikanan.", icon: Sprout },
+    { id: "hospitality", name: "Akomodasi & Rekreasi", desc: "Hotel, penginapan, tempat rekreasi, dan hiburan.", icon: Hotel },
   ];
+
+  // DYNAMIC JENIS USAHA DROPDOWN OPTIONS PER CATEGORY
+  const businessTypeMap: Record<string, string[]> = {
+    "Restoran & Kuliner": ["Restoran", "Warung Makan", "Cafe / Bistro", "Katering", "Fast Food / Food Stall", "Lainnya"],
+    "Retail & Toko Umum": ["Toko Kelontong", "Supermarket / Minimarket", "Toko Sembako", "Grosir", "Lainnya"],
+    "Coffee Shop & Bakery": ["Coffee Shop", "Bakery / Roti", "Dessert Bar", "Kedai Minuman", "Lainnya"],
+    "Material & Bangunan": ["Toko Bangunan", "Supplier Material", "Distributor Semen / Cat", "Lainnya"],
+    "Distributor & Perdagangan": ["Distributor B2B", "Perdagangan Besar", "Agen Resmi", "Lainnya"],
+    "Fashion & Lifestyle": ["Boutique / Distro", "Toko Sepatu & Tas", "Toko Aksesoris", "Lainnya"],
+    "Elektronik & Teknologi": ["Toko Handphone / Gadget", "Toko Komputer", "Servis Elektronik", "Lainnya"],
+    "Kesehatan & Kecantikan": ["Apotek", "Klinik Kecantikan", "Salon & Spa", "Toko Kosmetik", "Lainnya"],
+    "Otomotif": ["Bengkel Mobil / Motor", "Toko Sparepart", "Cuci Kendaraan", "Lainnya"],
+    "Jasa & Profesional": ["Jasa Konsultasi", "Studio Foto / Desain", "Jasa Keuangan", "Lainnya"],
+    "Pendidikan & Pelatihan": ["Bimbingan Belajar", "Tempat Kursus", "Sekolah Swasta", "Lainnya"],
+    "Pertanian & Peternakan": ["Toko Pertanian / Pupuk", "Peternakan / Pakan", "Toko Perikanan", "Lainnya"],
+    "Akomodasi & Rekreasi": ["Hotel / Guest House", "Penginapan / Homestay", "Tempat Rekreasi", "Lainnya"],
+  };
+
+  const currentBusinessOptions = businessTypeMap[formData.category] || ["Restoran", "Lainnya"];
 
   const validateStep = () => {
     setStepError("");
@@ -117,7 +146,6 @@ export function RegisterStoreModal({
     if (currentStep < 5) {
       setCurrentStep((prev) => (prev + 1) as any);
     } else {
-      // Create store
       setIsSuccess(true);
     }
   };
@@ -140,7 +168,7 @@ export function RegisterStoreModal({
 
   const togglePaymentMethod = (method: string) => {
     if (formData.paymentMethods.includes(method)) {
-      if (formData.paymentMethods.length === 1) return; // keep at least 1
+      if (formData.paymentMethods.length === 1) return;
       setFormData({
         ...formData,
         paymentMethods: formData.paymentMethods.filter((m) => m !== method),
@@ -229,7 +257,7 @@ export function RegisterStoreModal({
           )}
 
           {isSuccess ? (
-            /* SUCCESS STATE DIALOG (GAMBAR 2) */
+            /* SUCCESS STATE DIALOG */
             <div className="py-12 flex flex-col items-center justify-center text-center animate-in zoom-in-95 duration-200">
               <div className="w-20 h-20 rounded-full bg-emerald-100/70 text-[#00C897] flex items-center justify-center mb-6">
                 <CheckCircle2 className="w-12 h-12" />
@@ -264,6 +292,7 @@ export function RegisterStoreModal({
                     </p>
                   </div>
 
+                  {/* NAMA TOKO */}
                   <div>
                     <label className="block text-xs font-bold text-[#0A2540] mb-2 font-sans">
                       Nama toko atau outlet <span className="text-rose-500">*</span>
@@ -280,13 +309,13 @@ export function RegisterStoreModal({
                     </p>
                   </div>
 
+                  {/* KATEGORI USAHA GRID */}
                   <div>
                     <label className="block text-xs font-bold text-[#0A2540] mb-3 font-sans">
                       Kategori usaha <span className="text-rose-500">*</span>
                     </label>
 
-                    {/* CATEGORY SELECTION WITH SMOOTH ANIMATION */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-h-[300px] overflow-y-auto p-1">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-h-[300px] overflow-y-auto p-1 scrollbar-thin">
                       {categories.map((cat) => {
                         const IconComp = cat.icon;
                         const isSelected = formData.category === cat.name;
@@ -294,16 +323,17 @@ export function RegisterStoreModal({
                           <motion.div
                             key={cat.id}
                             layout
-                            onClick={() =>
+                            onClick={() => {
+                              const options = businessTypeMap[cat.name] || ["Restoran"];
                               setFormData({
                                 ...formData,
                                 category: cat.name,
-                                businessType: cat.name.split("&")[0].trim(),
-                              })
-                            }
+                                businessType: options[0],
+                              });
+                            }}
                             className={`p-3.5 rounded-2xl border cursor-pointer transition-all duration-200 ease-out flex items-start gap-3 relative ${
                               isSelected
-                                ? "border-[#00C897] bg-emerald-50/50 ring-2 ring-[#00C897]/30 shadow-md scale-[1.02]"
+                                ? "border-[#00C897] bg-emerald-50/50 ring-2 ring-[#00C897]/30 shadow-md scale-[1.01]"
                                 : "border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/60 opacity-90 hover:opacity-100"
                             }`}
                           >
@@ -335,6 +365,27 @@ export function RegisterStoreModal({
                           </motion.div>
                         );
                       })}
+                    </div>
+                  </div>
+
+                  {/* JENIS USAHA DROPDOWN (MATCHING MOCKUP SCREENSHOT 1) */}
+                  <div className="pt-2">
+                    <label className="block text-xs font-bold text-[#0A2540] mb-2 font-sans">
+                      Jenis usaha <span className="text-rose-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={formData.businessType}
+                        onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
+                        className="w-full appearance-none rounded-2xl border border-slate-200 bg-white py-3 pl-4 pr-10 text-sm text-slate-800 focus:border-[#00C897] focus:outline-none focus:ring-2 focus:ring-[#00C897]/30 shadow-sm"
+                      >
+                        {currentBusinessOptions.map((opt) => (
+                          <option key={opt} value={opt}>
+                            {opt}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                     </div>
                   </div>
                 </div>
@@ -536,7 +587,7 @@ export function RegisterStoreModal({
                 </div>
               )}
 
-              {/* STEP 4: PEMBAYARAN (EXACT MOCKUP SCREENSHOT 3 MATCH) */}
+              {/* STEP 4: PEMBAYARAN */}
               {currentStep === 4 && (
                 <div className="space-y-6">
                   <div>

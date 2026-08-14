@@ -20,20 +20,14 @@ const PUBLIC_ROUTES = [
 ];
 const ADMIN_ONLY_ROUTES = ["/admin"];
 
-function generateNonce(): string {
-  const array = new Uint8Array(16);
-  crypto.getRandomValues(array);
-  return Buffer.from(array).toString("base64");
-}
-
-function buildCsp(nonce: string): string {
+function buildCsp(): string {
   const directives: Record<string, string> = {
-    "default-src": "'self'",
-    "script-src": `'self' 'nonce-${nonce}' 'unsafe-inline' 'unsafe-eval'`,
-    "style-src": `'self' 'unsafe-inline' https://fonts.googleapis.com`,
-    "img-src": "'self' data: blob: https://*.cashora.id",
+    "default-src": "'self' https://*.vercel.app",
+    "script-src": "'self' 'unsafe-inline' 'unsafe-eval' https://*.vercel.app",
+    "style-src": "'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "img-src": "'self' data: blob: https://*.cashora.id https://*.vercel.app",
     "font-src": "'self' data: https://fonts.gstatic.com",
-    "connect-src": "'self' https://api.cashora.id wss://api.cashora.id https://fonts.googleapis.com https://fonts.gstatic.com",
+    "connect-src": "'self' https://api.cashora.id wss://api.cashora.id https://fonts.googleapis.com https://fonts.gstatic.com https://*.vercel.app",
     "frame-ancestors": "'none'",
     "base-uri": "'self'",
     "form-action": "'self'",
@@ -67,19 +61,10 @@ export default auth(async function middleware(request: NextRequest) {
     }
   }
 
-  // ── 3. Content Security Policy (Nonce) ────────────────────────────────────
-  const nonce = generateNonce();
-  const csp = buildCsp(nonce);
+  // ── 3. Content Security Policy ───────────────────────────────────────────
+  const csp = buildCsp();
 
-  const response = NextResponse.next({
-    request: {
-      headers: new Headers({
-        ...Object.fromEntries(request.headers),
-        "x-nonce": nonce,
-      }),
-    },
-  });
-
+  const response = NextResponse.next();
   response.headers.set("Content-Security-Policy", csp);
 
   return response;

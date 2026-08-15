@@ -232,7 +232,7 @@ export function OwnerKpiHeader({
                 />
               </button>
 
-              {/* USER PROFILE POPOVER MENU (MATCHING MOCKUP SCREENSHOT) */}
+              {/* USER PROFILE POPOVER MENU */}
               {showProfileMenu && (
                 <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200/80 p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   {/* USER INFO HEADER */}
@@ -245,40 +245,34 @@ export function OwnerKpiHeader({
                     </p>
                   </div>
 
-                  {/* MENU ITEMS */}
+                  {/* MENU ITEMS WITH DIRECT PAGE NAVIGATION */}
                   <div className="py-1 space-y-0.5">
-                    <button
-                      onClick={() => {
-                        setShowProfileMenu(false);
-                        alert("Membuka Pengaturan Profil Saya...");
-                      }}
+                    <Link
+                      href="/owner/profile"
+                      onClick={() => setShowProfileMenu(false)}
                       className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-[#0A2540] transition-colors"
                     >
                       <User className="w-4 h-4 text-slate-400" />
                       <span>Pengaturan Profil Saya</span>
-                    </button>
+                    </Link>
 
-                    <button
-                      onClick={() => {
-                        setShowProfileMenu(false);
-                        alert("Membuka Manajemen Staff & Akses...");
-                      }}
+                    <Link
+                      href="/owner/staff"
+                      onClick={() => setShowProfileMenu(false)}
                       className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-[#0A2540] transition-colors"
                     >
                       <Users className="w-4 h-4 text-slate-400" />
                       <span>Manajemen Staff & Akses</span>
-                    </button>
+                    </Link>
 
-                    <button
-                      onClick={() => {
-                        setShowProfileMenu(false);
-                        window.location.href = "/owner/menu";
-                      }}
+                    <Link
+                      href="/owner/menu"
+                      onClick={() => setShowProfileMenu(false)}
                       className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-[#0A2540] transition-colors"
                     >
                       <LayoutGrid className="w-4 h-4 text-slate-400" />
                       <span>Dasbor Utama</span>
-                    </button>
+                    </Link>
                   </div>
 
                   {/* LOGOUT BUTTON */}
@@ -326,8 +320,8 @@ export function OwnerKpiHeader({
               </p>
             </div>
 
-            {/* PERIOD TOGGLE BUTTONS */}
-            <div className="flex items-center gap-1.5 bg-white/10 p-1.5 rounded-2xl backdrop-blur-md border border-white/10">
+            {/* PERIOD QUICK FILTER TOGGLE */}
+            <div className="bg-white/10 backdrop-blur-md p-1.5 rounded-2xl border border-white/10 flex flex-wrap gap-1">
               {(
                 [
                   { id: "today", label: "Hari Ini" },
@@ -339,7 +333,7 @@ export function OwnerKpiHeader({
                 <button
                   key={p.id}
                   onClick={() => onPeriodChange(p.id)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     selectedPeriod === p.id
                       ? "bg-[#00C897] text-[#0A2540] shadow-md"
                       : "text-slate-300 hover:text-white hover:bg-white/10"
@@ -351,73 +345,119 @@ export function OwnerKpiHeader({
             </div>
           </div>
 
-          {/* 4 KPI SUMMARY CARDS */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {/* 1. TOTAL PENJUALAN */}
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-5 sm:p-6 border border-white/10 hover:border-[#00C897]/50 transition-all group">
+          {/* 4 FINANICAL KPI METRIC CARDS GRID */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Card 1: Total Penjualan */}
+            <motion.div
+              key={`sales-${selectedPeriod}`}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between"
+            >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs text-slate-300 font-semibold">Total Penjualan</span>
-                <div className="w-10 h-10 rounded-2xl bg-[#00C897]/20 text-[#00C897] flex items-center justify-center font-bold">
-                  <DollarSign className="w-5 h-5" />
+                <span className="text-xs font-medium text-slate-300">
+                  Total Penjualan
+                </span>
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-[#00C897] flex items-center justify-center">
+                  <DollarSign className="w-4 h-4" />
                 </div>
               </div>
-              <p className="text-2xl font-extrabold text-white font-sans tracking-tight">
-                {currentData.sales}
-              </p>
-              <div className="mt-2 flex items-center gap-1.5 text-xs text-[#00C897] font-bold">
-                <TrendingUp className="w-3.5 h-3.5" />
-                <span>{currentData.salesGrowth} vs periode lalu</span>
+              <div>
+                <p className="text-2xl font-black text-white tracking-tight font-sans">
+                  {currentData.sales}
+                </p>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="text-xs font-extrabold text-[#00C897] flex items-center gap-0.5">
+                    <TrendingUp className="w-3.5 h-3.5" />
+                    {currentData.salesGrowth}
+                  </span>
+                  <span className="text-[10px] text-slate-300">vs periode lalu</span>
+                </div>
               </div>
-            </div>
+            </motion.div>
 
-            {/* 2. TOTAL PENGELUARAN */}
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-5 sm:p-6 border border-white/10 hover:border-rose-400/50 transition-all group">
+            {/* Card 2: Total Pengeluaran */}
+            <motion.div
+              key={`exp-${selectedPeriod}`}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between"
+            >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs text-slate-300 font-semibold">Total Pengeluaran</span>
-                <div className="w-10 h-10 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold">
-                  <Receipt className="w-5 h-5" />
+                <span className="text-xs font-medium text-slate-300">
+                  Total Pengeluaran
+                </span>
+                <div className="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center">
+                  <Receipt className="w-4 h-4" />
                 </div>
               </div>
-              <p className="text-2xl font-extrabold text-white font-sans tracking-tight">
-                {currentData.expenses}
-              </p>
-              <div className="mt-2 flex items-center gap-1.5 text-xs text-rose-400 font-bold">
-                <TrendingDown className="w-3.5 h-3.5" />
-                <span>{currentData.expensesGrowth} efisiensi biaya</span>
+              <div>
+                <p className="text-2xl font-black text-white tracking-tight font-sans">
+                  {currentData.expenses}
+                </p>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="text-xs font-extrabold text-rose-400 flex items-center gap-0.5">
+                    <TrendingDown className="w-3.5 h-3.5" />
+                    {currentData.expensesGrowth}
+                  </span>
+                  <span className="text-[10px] text-slate-300">efisiensi biaya</span>
+                </div>
               </div>
-            </div>
+            </motion.div>
 
-            {/* 3. LABA BERSIH */}
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-5 sm:p-6 border border-white/10 hover:border-blue-400/50 transition-all group">
+            {/* Card 3: Laba Bersih */}
+            <motion.div
+              key={`profit-${selectedPeriod}`}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between"
+            >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs text-slate-300 font-semibold">Laba Bersih</span>
-                <div className="w-10 h-10 rounded-2xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold">
-                  <PieChart className="w-5 h-5" />
+                <span className="text-xs font-medium text-slate-300">
+                  Laba Bersih
+                </span>
+                <div className="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                  <PieChart className="w-4 h-4" />
                 </div>
               </div>
-              <p className="text-2xl font-extrabold text-white font-sans tracking-tight">
-                {currentData.netProfit}
-              </p>
-              <div className="mt-2 flex items-center gap-1.5 text-xs text-blue-300 font-bold">
-                <span className="px-2 py-0.5 rounded-md bg-blue-500/20">Margin {currentData.margin}</span>
+              <div>
+                <p className="text-2xl font-black text-white tracking-tight font-sans">
+                  {currentData.netProfit}
+                </p>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="text-xs font-extrabold text-blue-300 bg-blue-500/20 px-2 py-0.5 rounded-md">
+                    Margin {currentData.margin}
+                  </span>
+                </div>
               </div>
-            </div>
+            </motion.div>
 
-            {/* 4. VOLUME TRANSAKSI */}
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-5 sm:p-6 border border-white/10 hover:border-purple-400/50 transition-all group">
+            {/* Card 4: Volume Transaksi */}
+            <motion.div
+              key={`tx-${selectedPeriod}`}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between"
+            >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs text-slate-300 font-semibold">Volume Transaksi</span>
-                <div className="w-10 h-10 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold">
-                  <Activity className="w-5 h-5" />
+                <span className="text-xs font-medium text-slate-300">
+                  Volume Transaksi
+                </span>
+                <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                  <Activity className="w-4 h-4" />
                 </div>
               </div>
-              <p className="text-2xl font-extrabold text-white font-sans tracking-tight">
-                {currentData.transactions}
-              </p>
-              <div className="mt-2 flex items-center gap-1.5 text-xs text-purple-300 font-bold">
-                <span>Rata-rata: {currentData.avgOrder} / order</span>
+              <div>
+                <p className="text-2xl font-black text-white tracking-tight font-sans">
+                  {currentData.transactions}
+                </p>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="text-xs font-semibold text-purple-200">
+                    Rata-rata: {currentData.avgOrder} / order
+                  </span>
+                </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>

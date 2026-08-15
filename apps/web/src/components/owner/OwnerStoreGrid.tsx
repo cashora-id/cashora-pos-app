@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Search,
   CheckCircle,
@@ -12,7 +12,10 @@ import {
   ChevronRight,
   Plus,
   Sparkles,
-  Sparkle,
+  PauseCircle,
+  PlayCircle,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { RegisterStoreModal, type NewStoreData } from "./RegisterStoreModal";
@@ -79,6 +82,20 @@ export function OwnerStoreGrid() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "maintenance">("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close popover when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpenMenuId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const filteredStores = stores.filter((store) => {
     const matchesSearch =
@@ -122,6 +139,22 @@ export function OwnerStoreGrid() {
     };
 
     setStores((prev) => [...prev, newEntry]);
+  };
+
+  const toggleStoreMaintenance = (id: string) => {
+    setStores((prev) =>
+      prev.map((s) =>
+        s.id === id
+          ? { ...s, status: s.status === "active" ? "maintenance" : "active" }
+          : s
+      )
+    );
+    setOpenMenuId(null);
+  };
+
+  const handleDeleteStore = (id: string) => {
+    setStores((prev) => prev.filter((s) => s.id !== id));
+    setOpenMenuId(null);
   };
 
   return (
@@ -211,14 +244,14 @@ export function OwnerStoreGrid() {
                 />
               </div>
 
-              <div className="flex flex-1 flex-col p-6">
+              <div className="flex flex-1 flex-col p-6 relative">
                 {/* CARD HEADER */}
-                <div className="mb-5 flex items-start justify-between">
+                <div className="mb-5 flex items-start justify-between relative">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200/60 bg-slate-100 p-3 transition-transform group-hover:scale-105">
                     {getCategoryIcon(store.category)}
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 relative">
                     {store.status === "active" ? (
                       <span className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-extrabold border-emerald-200/60 bg-emerald-50 text-emerald-700 font-sans">
                         <CheckCircle className="h-3.5 w-3.5" />
@@ -226,17 +259,96 @@ export function OwnerStoreGrid() {
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-extrabold border-amber-200/60 bg-amber-50 text-amber-700 font-sans">
-                        <Wrench className="h-3.5 w-3.5" />
+                        <AlertTriangle className="h-3.5 w-3.5" />
                         Maintenance
                       </span>
                     )}
 
+                    {/* THREE-DOTS ACTION MENU BUTTON */}
                     <button
+                      type="button"
                       aria-label={`Menu aksi untuk ${store.name}`}
-                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#00C897]/50"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenMenuId(openMenuId === store.id ? null : store.id);
+                      }}
+                      className={`flex h-8 w-8 items-center justify-center rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-[#00C897]/50 ${
+                        openMenuId === store.id
+                          ? "bg-slate-200 text-slate-900"
+                          : "text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                      }`}
                     >
                       <MoreVertical className="w-4 h-4" />
                     </button>
+
+                    {/* THREE-DOTS POPOVER MENU (MATCHING GAMBAR 1 & 2) */}
+                    {openMenuId === store.id && (
+                      <div
+                        ref={menuRef}
+                        className="absolute right-0 top-10 z-30 w-64 rounded-2xl bg-white p-2 shadow-2xl border border-slate-200/80 animate-in fade-in zoom-in-95 duration-150"
+                      >
+                        {store.status === "active" ? (
+                          /* POPOVER MENU STATE 1: POS AKTIF (GAMBAR 1) */
+                          <div className="space-y-1">
+                            <button
+                              type="button"
+                              onClick={() => toggleStoreMaintenance(store.id)}
+                              className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-amber-50 text-left transition-colors group/item"
+                            >
+                              <div className="w-7 h-7 rounded-lg bg-amber-100/70 text-amber-600 flex items-center justify-center shrink-0">
+                                <PauseCircle className="w-4 h-4" />
+                              </div>
+                              <span className="text-xs font-bold text-slate-800 group-hover/item:text-amber-800 font-sans">
+                                Jeda Operasional
+                              </span>
+                            </button>
+
+                            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 opacity-60 cursor-not-allowed">
+                              <div className="flex items-center gap-3">
+                                <div className="w-7 h-7 rounded-lg bg-slate-200 text-slate-400 flex items-center justify-center shrink-0">
+                                  <Trash2 className="w-4 h-4" />
+                                </div>
+                                <span className="text-xs font-bold text-slate-400 font-sans">
+                                  Hapus Toko
+                                </span>
+                              </div>
+                              <p className="text-[10px] text-slate-400 mt-1.5 leading-tight font-normal">
+                                Toko yang sedang beroperasi tidak dapat dihapus. Jeda toko terlebih dahulu.
+                              </p>
+                            </div>
+                          </div>
+                        ) : (
+                          /* POPOVER MENU STATE 2: MAINTENANCE (GAMBAR 2) */
+                          <div className="space-y-1">
+                            <button
+                              type="button"
+                              onClick={() => toggleStoreMaintenance(store.id)}
+                              className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-emerald-50 text-left transition-colors group/item"
+                            >
+                              <div className="w-7 h-7 rounded-lg bg-emerald-100/70 text-[#00C897] flex items-center justify-center shrink-0">
+                                <PlayCircle className="w-4 h-4" />
+                              </div>
+                              <span className="text-xs font-bold text-slate-800 group-hover/item:text-[#00A87E] font-sans">
+                                Aktifkan Kembali
+                              </span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteStore(store.id)}
+                              className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-rose-50 text-left transition-colors group/item"
+                            >
+                              <div className="w-7 h-7 rounded-lg bg-rose-100/70 text-rose-600 flex items-center justify-center shrink-0">
+                                <Trash2 className="w-4 h-4" />
+                              </div>
+                              <span className="text-xs font-bold text-rose-600 group-hover/item:text-rose-700 font-sans">
+                                Hapus Toko
+                              </span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -248,32 +360,44 @@ export function OwnerStoreGrid() {
                   {store.categoryLabel} • {store.address}
                 </p>
 
-                {/* KEY STATS */}
-                <div className="my-5 grid grid-cols-2 gap-3 rounded-2xl bg-slate-50 p-3 border border-slate-100">
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-sans">
-                      Penjualan Hari Ini
-                    </p>
-                    <p className="mt-0.5 text-sm font-black text-[#0A2540] font-sans">
-                      {store.todaySales}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-sans">
-                      Transaksi
-                    </p>
-                    <div className="flex items-center gap-1 mt-0.5">
-                      <p className="text-sm font-black text-[#0A2540] font-sans">
-                        {store.todayTransactions}x
+                {/* KEY STATS OR MAINTENANCE ALERT (MATCHING GAMBAR 2) */}
+                {store.status === "active" ? (
+                  <div className="my-5 grid grid-cols-2 gap-3 rounded-2xl bg-slate-50 p-3 border border-slate-100">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-sans">
+                        Penjualan Hari Ini
                       </p>
-                      {store.isNew && (
-                        <span className="text-[10px] font-extrabold text-[#00A87E] bg-emerald-50 px-1.5 py-0.5 rounded-full border border-emerald-200">
-                          ~ Baru
-                        </span>
-                      )}
+                      <p className="mt-0.5 text-sm font-black text-[#0A2540] font-sans">
+                        {store.todaySales}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-sans">
+                        Transaksi
+                      </p>
+                      <div className="flex items-center gap-1 mt-0.5">
+                        <p className="text-sm font-black text-[#0A2540] font-sans">
+                          {store.todayTransactions}x
+                        </p>
+                        {store.isNew && (
+                          <span className="text-[10px] font-extrabold text-[#00A87E] bg-emerald-50 px-1.5 py-0.5 rounded-full border border-emerald-200">
+                            ~ Baru
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  /* MAINTENANCE DISPLAY BOX (GAMBAR 2 MATCH) */
+                  <div className="my-5 rounded-2xl bg-amber-50/80 border border-amber-200/80 p-4 text-center">
+                    <p className="text-xs font-extrabold text-amber-900 font-sans">
+                      Sistem Dalam Pemeliharaan
+                    </p>
+                    <p className="text-[11px] text-amber-700 mt-1 font-medium">
+                      Pengaturan dapat diperbarui melalui detail toko.
+                    </p>
+                  </div>
+                )}
 
                 {/* CARD FOOTER BUTTON */}
                 <div className="mt-auto pt-2 flex items-center justify-between border-t border-slate-100">

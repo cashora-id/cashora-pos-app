@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Bell,
@@ -13,9 +13,14 @@ import {
   Receipt,
   PieChart,
   Activity,
+  User,
+  Users,
+  LayoutGrid,
+  LogOut,
 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { motion } from "framer-motion";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export type PeriodType = "today" | "yesterday" | "7d" | "30d";
 
@@ -28,8 +33,45 @@ export function OwnerKpiHeader({
   selectedPeriod,
   onPeriodChange,
 }: OwnerKpiHeaderProps) {
+  const { user, logout } = useAuthStore();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
+
+  const userName = user?.name || "Budi Santoso";
+  const userEmail = user?.email || "budi.santoso@cashoragroup.id";
+  const initials = userName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .substring(0, 2) || "BS";
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowProfileMenu(false);
+      }
+      if (
+        notifRef.current &&
+        !notifRef.current.contains(event.target as Node)
+      ) {
+        setShowNotifications(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    window.location.href = "/login";
+  };
 
   // Dynamic KPI Data simulation based on selected period
   const kpiDataMap: Record<
@@ -113,7 +155,7 @@ export function OwnerKpiHeader({
           {/* RIGHT CONTROLS: NOTIFICATION, HELP, PROFILE */}
           <div className="flex items-center gap-3 relative">
             {/* NOTIFICATION BELL */}
-            <div className="relative">
+            <div className="relative" ref={notifRef}>
               <button
                 aria-label="Notifikasi"
                 onClick={() => setShowNotifications(!showNotifications)}
@@ -167,24 +209,90 @@ export function OwnerKpiHeader({
             <div className="h-6 w-px bg-slate-200 mx-1 hidden sm:block" />
 
             {/* USER PROFILE DROPDOWN */}
-            <div className="relative">
+            <div className="relative" ref={profileMenuRef}>
               <button
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="flex items-center gap-2 pl-1 cursor-pointer group"
+                className="flex items-center gap-2 pl-1 cursor-pointer group focus:outline-none"
               >
                 <div className="w-9 h-9 rounded-xl bg-[#0A2540] text-white flex items-center justify-center font-bold text-sm shadow-md ring-2 ring-emerald-500/20 group-hover:ring-emerald-500 transition-all font-sans">
-                  BS
+                  {initials}
                 </div>
                 <div className="hidden md:block text-left">
                   <p className="text-sm font-bold text-[#0A2540] leading-none mb-0.5 group-hover:text-[#00C897] transition-colors font-sans">
-                    Budi Santoso
+                    {userName}
                   </p>
                   <p className="text-[11px] font-medium text-slate-500 leading-none">
                     Pemilik Utama
                   </p>
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 transition-transform" />
+                <ChevronDown
+                  className={`w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 transition-transform ${
+                    showProfileMenu ? "rotate-180" : ""
+                  }`}
+                />
               </button>
+
+              {/* USER PROFILE POPOVER MENU (MATCHING MOCKUP SCREENSHOT) */}
+              {showProfileMenu && (
+                <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200/80 p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  {/* USER INFO HEADER */}
+                  <div className="p-3 border-b border-slate-100">
+                    <p className="text-xs font-bold text-[#0A2540] font-sans">
+                      {userName}
+                    </p>
+                    <p className="text-[11px] text-slate-400 font-mono mt-0.5 truncate">
+                      {userEmail}
+                    </p>
+                  </div>
+
+                  {/* MENU ITEMS */}
+                  <div className="py-1 space-y-0.5">
+                    <button
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        alert("Membuka Pengaturan Profil Saya...");
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-[#0A2540] transition-colors"
+                    >
+                      <User className="w-4 h-4 text-slate-400" />
+                      <span>Pengaturan Profil Saya</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        alert("Membuka Manajemen Staff & Akses...");
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-[#0A2540] transition-colors"
+                    >
+                      <Users className="w-4 h-4 text-slate-400" />
+                      <span>Manajemen Staff & Akses</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        window.location.href = "/owner/menu";
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-[#0A2540] transition-colors"
+                    >
+                      <LayoutGrid className="w-4 h-4 text-slate-400" />
+                      <span>Dasbor Utama</span>
+                    </button>
+                  </div>
+
+                  {/* LOGOUT BUTTON */}
+                  <div className="pt-1 border-t border-slate-100">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors"
+                    >
+                      <LogOut className="w-4 h-4 text-rose-500" />
+                      <span>Keluar Akun</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -218,8 +326,8 @@ export function OwnerKpiHeader({
               </p>
             </div>
 
-            {/* PERIOD QUICK FILTER TOGGLE */}
-            <div className="bg-white/10 backdrop-blur-md p-1.5 rounded-2xl border border-white/10 flex flex-wrap gap-1">
+            {/* PERIOD TOGGLE BUTTONS */}
+            <div className="flex items-center gap-1.5 bg-white/10 p-1.5 rounded-2xl backdrop-blur-md border border-white/10">
               {(
                 [
                   { id: "today", label: "Hari Ini" },
@@ -231,10 +339,10 @@ export function OwnerKpiHeader({
                 <button
                   key={p.id}
                   onClick={() => onPeriodChange(p.id)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     selectedPeriod === p.id
-                      ? "bg-[#00C897] text-[#0A2540] shadow-md shadow-emerald-500/20 scale-105"
-                      : "text-slate-200 hover:bg-white/10 hover:text-white"
+                      ? "bg-[#00C897] text-[#0A2540] shadow-md"
+                      : "text-slate-300 hover:text-white hover:bg-white/10"
                   }`}
                 >
                   {p.label}
@@ -243,124 +351,73 @@ export function OwnerKpiHeader({
             </div>
           </div>
 
-          {/* 4 FINANICAL KPI METRIC CARDS GRID */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Card 1: Total Penjualan */}
-            <motion.div
-              key={`sales-${selectedPeriod}`}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between"
-            >
+          {/* 4 KPI SUMMARY CARDS */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {/* 1. TOTAL PENJUALAN */}
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-5 sm:p-6 border border-white/10 hover:border-[#00C897]/50 transition-all group">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-medium text-slate-300">
-                  Total Penjualan
-                </span>
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-[#00C897] flex items-center justify-center">
-                  <DollarSign className="w-4 h-4" />
+                <span className="text-xs text-slate-300 font-semibold">Total Penjualan</span>
+                <div className="w-10 h-10 rounded-2xl bg-[#00C897]/20 text-[#00C897] flex items-center justify-center font-bold">
+                  <DollarSign className="w-5 h-5" />
                 </div>
               </div>
-              <div>
-                <p className="text-2xl font-black text-white tracking-tight font-sans">
-                  {currentData.sales}
-                </p>
-                <div className="flex items-center gap-1.5 mt-1">
-                  <span className="text-xs font-extrabold text-[#00C897] flex items-center gap-0.5">
-                    <TrendingUp className="w-3.5 h-3.5" />
-                    {currentData.salesGrowth}
-                  </span>
-                  <span className="text-[11px] text-slate-400">vs periode lalu</span>
-                </div>
+              <p className="text-2xl font-extrabold text-white font-sans tracking-tight">
+                {currentData.sales}
+              </p>
+              <div className="mt-2 flex items-center gap-1.5 text-xs text-[#00C897] font-bold">
+                <TrendingUp className="w-3.5 h-3.5" />
+                <span>{currentData.salesGrowth} vs periode lalu</span>
               </div>
-            </motion.div>
+            </div>
 
-            {/* Card 2: Total Pengeluaran */}
-            <motion.div
-              key={`exp-${selectedPeriod}`}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between"
-            >
+            {/* 2. TOTAL PENGELUARAN */}
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-5 sm:p-6 border border-white/10 hover:border-rose-400/50 transition-all group">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-medium text-slate-300">
-                  Total Pengeluaran
-                </span>
-                <div className="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center">
-                  <Receipt className="w-4 h-4" />
+                <span className="text-xs text-slate-300 font-semibold">Total Pengeluaran</span>
+                <div className="w-10 h-10 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold">
+                  <Receipt className="w-5 h-5" />
                 </div>
               </div>
-              <div>
-                <p className="text-2xl font-black text-white tracking-tight font-sans">
-                  {currentData.expenses}
-                </p>
-                <div className="flex items-center gap-1.5 mt-1">
-                  <span className="text-xs font-extrabold text-rose-400 flex items-center gap-0.5">
-                    <TrendingDown className="w-3.5 h-3.5" />
-                    {currentData.expensesGrowth}
-                  </span>
-                  <span className="text-[11px] text-slate-400">efisiensi biaya</span>
-                </div>
+              <p className="text-2xl font-extrabold text-white font-sans tracking-tight">
+                {currentData.expenses}
+              </p>
+              <div className="mt-2 flex items-center gap-1.5 text-xs text-rose-400 font-bold">
+                <TrendingDown className="w-3.5 h-3.5" />
+                <span>{currentData.expensesGrowth} efisiensi biaya</span>
               </div>
-            </motion.div>
+            </div>
 
-            {/* Card 3: Laba Bersih */}
-            <motion.div
-              key={`net-${selectedPeriod}`}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between"
-            >
+            {/* 3. LABA BERSIH */}
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-5 sm:p-6 border border-white/10 hover:border-blue-400/50 transition-all group">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-medium text-slate-300">
-                  Laba Bersih
-                </span>
-                <div className="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
-                  <PieChart className="w-4 h-4" />
+                <span className="text-xs text-slate-300 font-semibold">Laba Bersih</span>
+                <div className="w-10 h-10 rounded-2xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold">
+                  <PieChart className="w-5 h-5" />
                 </div>
               </div>
-              <div>
-                <p className="text-2xl font-black text-white tracking-tight font-sans">
-                  {currentData.netProfit}
-                </p>
-                <div className="flex items-center gap-1.5 mt-1">
-                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-400/20 text-blue-300">
-                    Margin {currentData.margin}
-                  </span>
-                </div>
+              <p className="text-2xl font-extrabold text-white font-sans tracking-tight">
+                {currentData.netProfit}
+              </p>
+              <div className="mt-2 flex items-center gap-1.5 text-xs text-blue-300 font-bold">
+                <span className="px-2 py-0.5 rounded-md bg-blue-500/20">Margin {currentData.margin}</span>
               </div>
-            </motion.div>
+            </div>
 
-            {/* Card 4: Volume Transaksi */}
-            <motion.div
-              key={`trx-${selectedPeriod}`}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between"
-            >
+            {/* 4. VOLUME TRANSAKSI */}
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-5 sm:p-6 border border-white/10 hover:border-purple-400/50 transition-all group">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-medium text-slate-300">
-                  Volume Transaksi
-                </span>
-                <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-300 flex items-center justify-center">
-                  <Activity className="w-4 h-4" />
+                <span className="text-xs text-slate-300 font-semibold">Volume Transaksi</span>
+                <div className="w-10 h-10 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold">
+                  <Activity className="w-5 h-5" />
                 </div>
               </div>
-              <div>
-                <p className="text-2xl font-black text-white tracking-tight font-sans">
-                  {currentData.transactions}
-                </p>
-                <p className="text-xs text-slate-300 mt-1">
-                  Rata-rata:{" "}
-                  <span className="font-bold text-white">
-                    {currentData.avgOrder}
-                  </span>{" "}
-                  / order
-                </p>
+              <p className="text-2xl font-extrabold text-white font-sans tracking-tight">
+                {currentData.transactions}
+              </p>
+              <div className="mt-2 flex items-center gap-1.5 text-xs text-purple-300 font-bold">
+                <span>Rata-rata: {currentData.avgOrder} / order</span>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>

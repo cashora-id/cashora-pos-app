@@ -10,6 +10,11 @@ export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
+  // Hide public Navbar on Owner Dashboard & Kasir POS pages (they have their dedicated dashboard headers)
+  if (pathname.startsWith("/owner") || pathname.startsWith("/kasir")) {
+    return null;
+  }
+
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "Layanan", href: "/layanan" },

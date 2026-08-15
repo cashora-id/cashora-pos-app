@@ -27,6 +27,7 @@ import {
   HelpCircle,
   ChevronRight,
   ChevronDown,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -85,7 +86,7 @@ export function RegisterStoreModal({
   });
 
   const [confirmedCheckbox, setConfirmedCheckbox] = useState(false);
-  const [stepError, setStepError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   if (!isOpen || !mounted) return null;
 
@@ -126,24 +127,25 @@ export function RegisterStoreModal({
   const currentBusinessOptions = businessTypeMap[formData.category] || ["Restoran", "Lainnya"];
 
   const validateStep = () => {
-    setStepError("");
+    const newErrors: Record<string, string> = {};
     if (currentStep === 1) {
       if (!formData.name.trim()) {
-        setStepError("Mohon isi nama toko atau outlet Anda.");
-        return false;
+        newErrors.name = "Masukkan nama toko atau outlet.";
       }
     }
     if (currentStep === 2) {
       if (!formData.city.trim()) {
-        setStepError("Mohon isi kota atau kabupaten outlet.");
-        return false;
+        newErrors.city = "Masukkan kota atau kabupaten.";
       }
       if (!formData.address.trim()) {
-        setStepError("Alamat lengkap outlet bersifat mandatori. Mohon isi alamat lengkap Anda.");
-        return false;
+        newErrors.address = "Masukkan alamat lengkap outlet.";
+      }
+      if (!formData.startDate.trim()) {
+        newErrors.startDate = "Pilih tanggal mulai operasional.";
       }
     }
-    return true;
+    setFieldErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleNext = () => {
@@ -157,7 +159,7 @@ export function RegisterStoreModal({
   };
 
   const handleBack = () => {
-    setStepError("");
+    setFieldErrors({});
     if (currentStep > 1) {
       setCurrentStep((prev) => (prev - 1) as any);
     } else {
@@ -256,12 +258,6 @@ export function RegisterStoreModal({
 
         {/* MODAL BODY */}
         <div className="p-6 sm:p-8 overflow-y-auto flex-1">
-          {stepError && (
-            <div className="mb-4 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold animate-in fade-in">
-              ⚠️ {stepError}
-            </div>
-          )}
-
           {isSuccess ? (
             /* SUCCESS STATE DIALOG */
             <div className="py-12 flex flex-col items-center justify-center text-center animate-in zoom-in-95 duration-200">
@@ -306,13 +302,27 @@ export function RegisterStoreModal({
                     <input
                       type="text"
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, name: e.target.value });
+                        if (fieldErrors.name) setFieldErrors({ ...fieldErrors, name: "" });
+                      }}
                       placeholder="Contoh: Kopi Senja Gubeng"
-                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00C897]/50 shadow-sm"
+                      className={`w-full px-4 py-3 bg-white border rounded-2xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none transition-all shadow-sm ${
+                        fieldErrors.name
+                          ? "border-rose-400 ring-1 ring-rose-400"
+                          : "border-slate-200 focus:ring-2 focus:ring-[#00C897]/50"
+                      }`}
                     />
-                    <p className="text-[11px] text-slate-400 mt-1">
-                      Nama ini tampil pada laporan, kasir POS, dan pengaturan outlet.
-                    </p>
+                    {fieldErrors.name ? (
+                      <p className="text-[11px] font-semibold text-rose-500 mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-3.5 h-3.5" />
+                        {fieldErrors.name}
+                      </p>
+                    ) : (
+                      <p className="text-[11px] text-slate-400 mt-1">
+                        Nama ini tampil pada laporan, kasir POS, dan pengaturan outlet.
+                      </p>
+                    )}
                   </div>
 
                   {/* KATEGORI USAHA GRID */}
@@ -420,10 +430,23 @@ export function RegisterStoreModal({
                       <input
                         type="text"
                         value={formData.city}
-                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                        onChange={(e) => {
+                          setFormData({ ...formData, city: e.target.value });
+                          if (fieldErrors.city) setFieldErrors({ ...fieldErrors, city: "" });
+                        }}
                         placeholder="Contoh: Surabaya"
-                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00C897]/50"
+                        className={`w-full px-4 py-3 bg-white border rounded-2xl text-sm text-slate-800 focus:outline-none transition-all ${
+                          fieldErrors.city
+                            ? "border-rose-400 ring-1 ring-rose-400"
+                            : "border-slate-200 focus:ring-2 focus:ring-[#00C897]/50"
+                        }`}
                       />
+                      {fieldErrors.city && (
+                        <p className="text-[11px] font-semibold text-rose-500 mt-1 flex items-center gap-1">
+                          <AlertCircle className="w-3.5 h-3.5" />
+                          {fieldErrors.city}
+                        </p>
+                      )}
                     </div>
 
                     <div>
@@ -442,7 +465,7 @@ export function RegisterStoreModal({
                     </div>
                   </div>
 
-                  {/* MANDATORY ADDRESS FIELD */}
+                  {/* MANDATORY ADDRESS FIELD WITH INLINE WARNING */}
                   <div>
                     <label className="block text-xs font-bold text-[#0A2540] mb-2 font-sans">
                       Alamat lengkap outlet <span className="text-rose-500">*</span>
@@ -450,13 +473,26 @@ export function RegisterStoreModal({
                     <textarea
                       rows={3}
                       value={formData.address}
-                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, address: e.target.value });
+                        if (fieldErrors.address) setFieldErrors({ ...fieldErrors, address: "" });
+                      }}
                       placeholder="Nama jalan, nomor, kecamatan, dan patokan"
-                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00C897]/50"
+                      className={`w-full px-4 py-3 bg-white border rounded-2xl text-sm text-slate-800 focus:outline-none transition-all ${
+                        fieldErrors.address
+                          ? "border-rose-400 ring-1 ring-rose-400"
+                          : "border-slate-200 focus:ring-2 focus:ring-[#00C897]/50"
+                      }`}
                     />
+                    {fieldErrors.address && (
+                      <p className="text-[11px] font-semibold text-rose-500 mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-3.5 h-3.5" />
+                        {fieldErrors.address}
+                      </p>
+                    )}
                   </div>
 
-                  {/* DATEPICKER WITH POPOVER */}
+                  {/* DATEPICKER WITH INLINE WARNING */}
                   <div className="relative">
                     <label className="block text-xs font-bold text-[#0A2540] mb-2 font-sans">
                       Tanggal mulai operasional <span className="text-rose-500">*</span>
@@ -467,10 +503,25 @@ export function RegisterStoreModal({
                         readOnly
                         value={formData.startDate}
                         onClick={() => setShowDatePicker(!showDatePicker)}
-                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm text-slate-800 cursor-pointer pr-10 focus:outline-none focus:ring-2 focus:ring-[#00C897]/50"
+                        className={`w-full px-4 py-3 bg-white border rounded-2xl text-sm text-slate-800 cursor-pointer pr-10 focus:outline-none transition-all ${
+                          fieldErrors.startDate
+                            ? "border-rose-400 ring-1 ring-rose-400"
+                            : "border-slate-200 focus:ring-2 focus:ring-[#00C897]/50"
+                        }`}
                       />
                       <CalendarIcon className="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
+
+                    {fieldErrors.startDate ? (
+                      <p className="text-[11px] font-semibold text-rose-500 mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-3.5 h-3.5" />
+                        {fieldErrors.startDate}
+                      </p>
+                    ) : (
+                      <p className="text-[11px] text-slate-400 mt-1">
+                        Gunakan tanggal rencana buka. Pengaturan dapat dilanjutkan setelah toko dibuat.
+                      </p>
+                    )}
 
                     {showDatePicker && (
                       <div className="absolute z-50 left-0 mt-2 bg-white rounded-2xl shadow-xl border border-slate-200 p-4 w-72 animate-in fade-in duration-150">
@@ -492,6 +543,7 @@ export function RegisterStoreModal({
                               key={d}
                               onClick={() => {
                                 setFormData({ ...formData, startDate: `2026-08-${d < 10 ? "0" + d : d}` });
+                                if (fieldErrors.startDate) setFieldErrors({ ...fieldErrors, startDate: "" });
                                 setShowDatePicker(false);
                               }}
                               className={`p-1.5 rounded-lg text-xs font-semibold ${
@@ -506,9 +558,6 @@ export function RegisterStoreModal({
                         </div>
                       </div>
                     )}
-                    <p className="text-[11px] text-slate-400 mt-1">
-                      Gunakan tanggal rencana buka. Pengaturan dapat dilanjutkan setelah toko dibuat.
-                    </p>
                   </div>
                 </div>
               )}
